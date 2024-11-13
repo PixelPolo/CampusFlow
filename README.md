@@ -1,21 +1,29 @@
-z# Readme
+# README
 
-This repository contains a Aurelia2 Material application with a drawer and one sub navigation item.
+This repository contains a Aurelia2 Material application.
 
-![](./screenshot.png)
+Skeleton available on <https://github.com/aurelia-ui-toolkits/aurelia-mdc-web/tree/v2>
+
+```bash
+npx makes aurelia-mdc-web/au2
+```
 
 ## Build
 
 ### Development mode
-* Injects the `services/config-dev.ts` config
-* Starts hot reloading development server
+
+- Injects the `services/config-dev.ts` config
+- Starts hot reloading development server
+
 ```bash
 npm start
 ```
 
 ### Build release
-* Injects the `services/config-prod.ts` config
-* Generates the application into `dist`
+
+- Injects the `services/config-prod.ts` config
+- Generates the application into `dist`
+
 ```bash
 npm run build
 ```
@@ -23,7 +31,9 @@ npm run build
 ## Utils
 
 ### Analyze package sizes
+
 Generates visualization of package sizes
+
 ```bash
 npm run analyze
 ```
@@ -38,4 +48,4 @@ npm install
 
 ## References
 
-- Material Framework: https://github.com/aurelia-ui-toolkits/aurelia-mdc-web
+- Material Framework: <https://github.com/aurelia-ui-toolkits/aurelia-mdc-web>
