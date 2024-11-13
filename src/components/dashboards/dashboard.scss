@@ -1,0 +1,25 @@
+.dashboard-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+
+  .feature-card {
+    width: 100%;
+    max-width: 400px;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    mdc-card {
+      width: 100%;
+    }
+  }
+
+  .card-content {
+    padding: 20px;
+    height: 100px;
+  }
+}

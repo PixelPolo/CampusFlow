@@ -1,0 +1,64 @@
+<require from="./my-app.scss"></require>
+<main>
+  <!-- TOP BAR -->
+  <mdc-top-app-bar fixed style="z-index: 7">
+    <mdc-top-app-bar-row>
+      <mdc-top-app-bar-section start>
+        <button
+          click.trigger="_drawer.toggle()"
+          mdc-ripple="unbounded.bind: true"
+          class="mdc-top-app-bar__navigation-icon mdc-icon-button mdc-ripple-upgraded--unbounded mdc-ripple-upgraded drawer-toggle-button"
+          role="button"
+        >
+          <i class="material-icons">menu</i>
+        </button>
+        <mdc-top-app-bar-title
+          ><strong>CampusFlow</strong></mdc-top-app-bar-title
+        >
+      </mdc-top-app-bar-section>
+      <mdc-top-app-bar-section end>
+        <a
+          href="https://github.com/aurelia-mdc-web/new"
+          title="Homepage"
+          target="_blank"
+          class="mdc-top-app-bar__action-item"
+          rel="noopener"
+          role="button"
+          mdc-body2
+          >1.0.0</a
+        >
+      </mdc-top-app-bar-section>
+    </mdc-top-app-bar-row>
+  </mdc-top-app-bar>
+
+  <!-- LEFT MENU -->
+  <mdc-drawer
+    view-model.ref="_drawer"
+    type="modal"
+    mdc-top-app-bar-fixed-adjust
+  >
+    <mdc-drawer-header
+      title="CampusFlow"
+      subtitle="Prototype"
+      tabindex="0"
+    ></mdc-drawer-header>
+    <mdc-drawer-content>
+      <mdc-list repeat.for="nav of allowedRoutes" aria-orientation="vertical">
+        <mdc-list-item
+          load.bind="nav.path"
+          class="mdc-list-item mdc-ripple-upgraded"
+          class.bind="nav.isActive ? 'mdc-list-item--activated' : ''"
+        >
+          <div class="mdc-list-item__ripple"></div>
+          <span class="mdc-list-item__text">${nav.title}</span>
+          <span if.bind="nav.settings.count>0">(${nav.settings.count})</span>
+        </mdc-list-item>
+      </mdc-list>
+    </mdc-drawer-content>
+  </mdc-drawer>
+
+  <!-- APPLICATION -->
+  <mdc-drawer-app-content mdc-top-app-bar-fixed-adjust>
+    <au-viewport></au-viewport>
+  </mdc-drawer-app-content>
+</main>

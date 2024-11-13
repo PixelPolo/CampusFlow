@@ -1,0 +1,48 @@
+// Custom color palette based on the provided image
+
+$dark: #000000;
+$green: #3c6e71;
+$white: #ffffff;
+$gray: #d9d9d9;
+$blue: #284b63;
+
+@use "@material/theme" with (
+  $primary: $blue,
+  $secondary: $green,
+  $on-primary: $white,
+  $on-secondary: $white,
+  $background: $gray,
+  $surface: $white,
+  $on-surface: $dark
+);
+
+@use "@aurelia-mdc-web/all";
+
+.mdc-top-app-bar {
+  background-color: $dark;
+  color: $white;
+}
+
+.mdc-button {
+  background-color: $green;
+  color: $white;
+}
+
+.mdc-card {
+  background-color: $white;
+  color: $dark;
+}
+
+body {
+  background-color: $blue;
+  color: $white;
+}
+
+/*
+// DEFAULT
+@use "@material/theme"with ($primary: #4b4b4b,
+    $secondary: #f6a821,
+    $on-primary: #ffffff,
+    $on-secondary: #ffffff,
+);
+*/
