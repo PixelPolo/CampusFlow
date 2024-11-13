@@ -14,7 +14,7 @@ export class AuthHook {
 
   constructor() {}
 
-  async canLoad(
+  canLoad(
     viewModel: any,
     params: Parameters,
     instruction: RoutingInstruction,

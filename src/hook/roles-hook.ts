@@ -14,7 +14,7 @@ export class RolesHook {
 
   constructor() {}
 
-  async canLoad(
+  canLoad(
     viewModel: any,
     params: Parameters,
     instruction: RoutingInstruction,
