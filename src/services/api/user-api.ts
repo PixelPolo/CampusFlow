@@ -1,3 +1,4 @@
+import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
 const latency = 1000;
@@ -43,6 +44,7 @@ let users: User[] = [
   },
 ];
 
+@singleton()
 export class UserAPI {
   isRequesting = false;
 
@@ -76,6 +78,20 @@ export class UserAPI {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const user = users.find((user) => user.id === id);
+        if (user) {
+          resolve({ status: 200, data: user });
+        } else {
+          reject({ status: 404, message: "User not found" });
+        }
+      }, latency);
+    });
+  }
+
+  // GET /users/email/:email
+  public getUserByEmail(email: string): Promise<StatusResponse<User>> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const user = users.find((user) => user.email === email);
         if (user) {
           resolve({ status: 200, data: user });
         } else {
