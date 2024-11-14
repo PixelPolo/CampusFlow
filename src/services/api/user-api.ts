@@ -47,6 +47,7 @@ let users: User[] = [
 @singleton()
 export class UserAPI {
   isRequesting = false;
+    static getUserByEmail: string;
 
   // POST /users
   public createUser(newUser: User): Promise<StatusResponse<User>> {

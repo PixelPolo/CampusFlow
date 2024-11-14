@@ -24,3 +24,11 @@ mdc-layout-grid-cell {
 .full-width {
   width: 100%;
 }
+
+.message {
+  color: black; /* Texte en noir par défaut */
+}
+
+.message.error {
+  color: red; /* Texte en rouge en cas d'erreur */
+}

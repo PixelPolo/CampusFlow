@@ -6,24 +6,17 @@
       <mdc-layout-grid>
         <mdc-layout-grid-inner>
           <mdc-layout-grid-cell span="12">
-            <mdc-text-field
-              class="full-width"
-              label="Email Address"
-              type="email"
-            ></mdc-text-field>
+            <mdc-text-field class="full-width" label="Email Address" type="email" value.bind="email"></mdc-text-field>
           </mdc-layout-grid-cell>
           <mdc-layout-grid-cell span="12">
-            <mdc-text-field
-              class="full-width"
-              label="Password"
-              type="password"
-            ></mdc-text-field>
+            <mdc-text-field class="full-width" label="Password" type="password" value.bind="password"></mdc-text-field>
           </mdc-layout-grid-cell>
           <mdc-layout-grid-cell span="12" class="center-cell">
-            <mdc-button raised class="login-button">Login</mdc-button>
+            <mdc-button raised class="login-button" click.trigger="login()">Login</mdc-button>
           </mdc-layout-grid-cell>
         </mdc-layout-grid-inner>
       </mdc-layout-grid>
+      <p class="${loginError ? 'message error' : 'message'}">${loginMessage}</p>
     </div>
   </div>
 </template>
