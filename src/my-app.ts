@@ -12,7 +12,7 @@ import { StudentDashboard } from "./components/dashboards/student/student-dashbo
 import { ProfessorDashboard } from "./components/dashboards/professor/professor-dashboard";
 import { AdministrativeDashboard } from "./components/dashboards/administrative/administrative-dashboard";
 import { InProgress } from "./components/in-progress/in-progress";
-import { AuthService } from "./services/auth";
+import { AuthService } from "./services/auth/auth";
 import { resolve } from "aurelia";
 
 export class MyApp {
@@ -88,7 +88,8 @@ export class MyApp {
     const requiredRole = routeData.requiredRole;
     const navigable = routeData.nav;
     return (
-      navigable !== false && this.authService.isAuthenticated() &&
+      navigable !== false &&
+      this.authService.isAuthenticated() &&
       (!requiredRole || this.userRoles.includes(requiredRole))
     );
   });

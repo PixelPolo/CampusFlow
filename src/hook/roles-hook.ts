@@ -1,4 +1,4 @@
-import { AuthService } from "./../services/auth";
+import { AuthService } from "../services/auth/auth";
 import { lifecycleHooks, resolve } from "aurelia";
 import {
   Parameters,
