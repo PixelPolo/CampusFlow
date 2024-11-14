@@ -43,7 +43,7 @@ let users: User[] = [
   },
 ];
 
-export class WebAPI {
+export class UserAPI {
   isRequesting = false;
 
   // POST /users
