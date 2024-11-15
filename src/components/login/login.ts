@@ -1,9 +1,12 @@
-import { IRouteableComponent } from "@aurelia/router";
+import { IRouteableComponent, IRouter } from "@aurelia/router";
 import { UserAPI } from "../../services/api/user-api";
 import { resolve } from "aurelia";
+import { AuthService } from "../../services/auth/auth";
 
 export class Login implements IRouteableComponent {
     readonly userAPI: UserAPI = resolve(UserAPI);
+    readonly authService: AuthService = resolve(AuthService);
+    readonly router: IRouter = resolve(IRouter);
 
     email: string = '';
     password: string = '';
@@ -19,7 +22,21 @@ export class Login implements IRouteableComponent {
                 this.loginMessage = "Login successful!";
                 this.loginError = false;
 
-                // Redirection to dashboard here
+                // Redirection to dashboard
+                switch (response.data.role) {
+                    case "student":
+                      await this.router.load("/student-dashboard");
+                      break;
+                    case "professor":
+                      await this.router.load("/professor-dashboard");
+                      break;
+                    case "administrative":
+                      await this.router.load("/administrative-dashboard");
+                      break;
+                    default:
+                      this.loginMessage = "Unknown role. Cannot redirect.";
+                      this.loginError = true;
+                  }
 
             } else {
                 // Password incorrect
