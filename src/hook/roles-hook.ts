@@ -9,20 +9,24 @@ import {
 
 @lifecycleHooks()
 export class RolesHook {
+  // ********************
+  // ***** SERVICES *****
+  // ********************
   readonly authService: AuthService = resolve(AuthService);
   readonly router: IRouter = resolve(IRouter);
 
-  constructor() {}
-
+  // *******************
+  // ***** METHODS *****
+  // *******************
   canLoad(
     viewModel: any,
     params: Parameters,
     instruction: RoutingInstruction,
     navigation: Navigation
   ) {
-    const requiredRoles = instruction.route.match.data.requiredRole;
+    const requiredRoles = instruction.route.match.data.requiredRoles;
     const userRoles = this.authService.getUserRoles();
-    if (!userRoles.includes(requiredRoles)) {
+    if (!requiredRoles.some((role: string) => userRoles.includes(role))) {
       this.router.load("/login");
     }
     return true;

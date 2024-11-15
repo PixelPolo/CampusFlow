@@ -1,27 +1,32 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
-const latency = 1000;
-let id = 0;
+// *****************
+// ***** USERS *****
+// *****************
 
-function genID() {
-  return ++id;
-}
-
+// Interface
 export interface User {
   id?: number;
   password: string;
-  role: string;
+  roles: string[];
   firstName: string;
   lastName: string;
   email: string;
 }
 
+// ID Generation
+let id = 0;
+function genID() {
+  return ++id;
+}
+
+// Mock Data
 let users: User[] = [
   {
     id: genID(),
     password: "123",
-    role: "student",
+    roles: ["student"],
     firstName: "Jack",
     lastName: "Doe",
     email: "jack.doe@student.com",
@@ -29,7 +34,7 @@ let users: User[] = [
   {
     id: genID(),
     password: "123",
-    role: "professor",
+    roles: ["professor"],
     firstName: "Fabian",
     lastName: "Smith",
     email: "fabian.smith@university.com",
@@ -37,17 +42,27 @@ let users: User[] = [
   {
     id: genID(),
     password: "123",
-    role: "administrative",
+    roles: ["administrative"],
     firstName: "Jane",
     lastName: "Johnson",
     email: "jane.johnson@university.com",
   },
 ];
 
+// ***************************************
+// ***** USER API RESTful SIMULATION *****
+// ***************************************
+
 @singleton()
-export class UserAPI {
-  isRequesting = false;
-    static getUserByEmail: string;
+export class UsersAPI {
+  // ******************
+  // ***** FIELDS *****
+  // ******************
+  private latency = 1000;
+
+  // *******************
+  // ***** METHODS *****
+  // *******************
 
   // POST /users
   public createUser(newUser: User): Promise<StatusResponse<User>> {
@@ -61,7 +76,7 @@ export class UserAPI {
           users.push(newUser);
           resolve({ status: 201, data: newUser });
         }
-      }, latency);
+      }, this.latency);
     });
   }
 
@@ -70,7 +85,7 @@ export class UserAPI {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ status: 200, data: users });
-      }, latency);
+      }, this.latency);
     });
   }
 
@@ -84,7 +99,7 @@ export class UserAPI {
         } else {
           reject({ status: 404, message: "User not found" });
         }
-      }, latency);
+      }, this.latency);
     });
   }
 
@@ -98,7 +113,7 @@ export class UserAPI {
         } else {
           reject({ status: 404, message: "User not found" });
         }
-      }, latency);
+      }, this.latency);
     });
   }
 
@@ -116,7 +131,7 @@ export class UserAPI {
         } else {
           reject({ status: 404, message: "User not found" });
         }
-      }, latency);
+      }, this.latency);
     });
   }
 
@@ -131,7 +146,7 @@ export class UserAPI {
         } else {
           reject({ status: 404, message: "User not found" });
         }
-      }, latency);
+      }, this.latency);
     });
   }
 }

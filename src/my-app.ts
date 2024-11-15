@@ -1,11 +1,4 @@
-// import { Dashboard } from './components/dashboard/dashboard';
-
-// export class MyApp {
-//     static routes = [{ component: Dashboard, title: 'Dashboard', path: 'dashboard' }];
-//     routes = MyApp.routes;
-// }
-
-import { IRoute } from "@aurelia/router";
+import { IRoute, IRouter } from "@aurelia/router";
 import { Login } from "./components/login/login";
 import { About } from "./components/about/about";
 import { StudentDashboard } from "./components/dashboards/student/student-dashboard";
@@ -14,10 +7,18 @@ import { AdministrativeDashboard } from "./components/dashboards/administrative/
 import { InProgress } from "./components/in-progress/in-progress";
 import { AuthService } from "./services/auth/auth";
 import { resolve } from "aurelia";
+import { watch } from "aurelia";
 
 export class MyApp {
+  // ********************
+  // ***** SERVICES *****
+  // ********************
   readonly authService: AuthService = resolve(AuthService);
+  readonly router: IRouter = resolve(IRouter);
 
+  // ******************
+  // ***** FIELDS *****
+  // ******************
   static routes: IRoute[] = [
     {
       path: "",
@@ -25,6 +26,7 @@ export class MyApp {
       redirectTo: "login",
       data: {
         nav: false,
+        public: true,
       },
     },
     {
@@ -33,6 +35,7 @@ export class MyApp {
       title: "Login",
       data: {
         nav: false,
+        public: true,
       },
     },
     {
@@ -41,6 +44,7 @@ export class MyApp {
       title: "About",
       data: {
         nav: true,
+        public: true,
       },
     },
     {
@@ -57,7 +61,7 @@ export class MyApp {
       title: "Student Dashboard",
       data: {
         nav: true,
-        requiredRole: "student",
+        requiredRoles: ["student"],
       },
     },
     {
@@ -66,7 +70,7 @@ export class MyApp {
       title: "Professor Dashboard",
       data: {
         nav: true,
-        requiredRole: "professor",
+        requiredRoles: ["professor"],
       },
     },
     {
@@ -75,22 +79,68 @@ export class MyApp {
       title: "Administrative Dashboard",
       data: {
         nav: true,
-        requiredRole: "administrative",
+        requiredRoles: ["administrative"],
       },
     },
   ];
-  routes = MyApp.routes;
 
-  // Menu based on roles
-  userRoles = this.authService.getUserRoles();
-  allowedRoutes = this.routes.filter((route) => {
-    const routeData = route.data as { requiredRole?: string; nav?: boolean };
-    const requiredRole = routeData.requiredRole;
-    const navigable = routeData.nav;
-    return (
-      navigable !== false &&
-      this.authService.isAuthenticated() &&
-      (!requiredRole || this.userRoles.includes(requiredRole))
-    );
-  });
+  public allowedRoutes: IRoute[] = [];
+
+  // ***********************
+  // ***** CONSTRUCTOR *****
+  // ***********************
+  constructor() {
+    this.updateAllowedRoutes();
+  }
+
+  // *******************
+  // ***** METHODS *****
+  // *******************
+
+  // Watch the authService.currentUser observable
+  @watch("authService.currentUser")
+  public currentUserChanged() {
+    this.updateAllowedRoutes();
+  }
+
+  // Role based dynamic menu
+  private updateAllowedRoutes() {
+    const userRoles = this.authService.getUserRoles();
+    this.allowedRoutes = MyApp.routes.filter((route) => {
+      const routeData = route.data as {
+        requiredRoles?: string[];
+        nav?: boolean;
+        public?: boolean;
+      };
+      const isPublic = routeData.public;
+      const requiredRoles = routeData.requiredRoles;
+      const navigable = routeData.nav;
+      return (
+        // Navigable AND...
+        navigable !== false &&
+        // Public OR ...
+        (isPublic ||
+          // Logged in AND required roles
+          (this.authService.isAuthenticated() &&
+            (!requiredRoles ||
+              requiredRoles.some((role) => userRoles.includes(role)))))
+      );
+    });
+  }
+
+  // Credentials
+  public openGithubCredentials() {
+    window.open("https://github.com/aurelia-mdc-web/new", "_blank");
+  }
+
+  // logout
+  public logout() {
+    this.authService.logout();
+    this.home();
+  }
+
+  // home
+  public home() {
+    this.router.load("/");
+  }
 }

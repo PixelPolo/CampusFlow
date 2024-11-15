@@ -3,9 +3,15 @@ import { AuthHook } from "../../../hook/auth-hook";
 import { RolesHook } from "../../../hook/roles-hook";
 
 export class AdministrativeDashboard implements IRouteableComponent {
+  // *****************
+  // ***** HOOKS *****
+  // *****************
   static dependencies = [AuthHook, RolesHook];
 
-  features = [
+  // ******************
+  // ***** FIELDS *****
+  // ******************
+  public features = [
     {
       title: "Send Invoices",
       description: "Send invoices via email",
@@ -38,6 +44,10 @@ export class AdministrativeDashboard implements IRouteableComponent {
       route: "in-progress",
     },
   ];
+
+  // *******************
+  // ***** METHODS *****
+  // *******************
 
   navigateTo(route: string) {
     window.location.href = `#/${route}`;

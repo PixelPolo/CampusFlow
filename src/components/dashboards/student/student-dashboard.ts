@@ -3,8 +3,14 @@ import { AuthHook } from "../../../hook/auth-hook";
 import { RolesHook } from "../../../hook/roles-hook";
 
 export class StudentDashboard implements IRouteableComponent {
+  // *****************
+  // ***** HOOKS *****
+  // *****************
   static dependencies = [AuthHook, RolesHook];
 
+  // ******************
+  // ***** FIELDS *****
+  // ******************
   features = [
     {
       title: "My Courses",
@@ -28,6 +34,9 @@ export class StudentDashboard implements IRouteableComponent {
     },
   ];
 
+  // *******************
+  // ***** METHODS *****
+  // *******************
   navigateTo(route: string) {
     // window.location.href = `#/${route}`;
   }
