@@ -24,6 +24,9 @@ export class AuthHook {
     instruction: RoutingInstruction,
     navigation: Navigation
   ) {
+    // UNCOMMENT FOR PROD
+    return true
+
     if (!this.authService.isAuthenticated()) {
       this.router.load("/login");
     }

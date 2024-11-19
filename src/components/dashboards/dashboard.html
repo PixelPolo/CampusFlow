@@ -1,0 +1,22 @@
+<template>
+  <require from="./dashboard.scss"></require>
+  <div mdc-headline5 class="title">${dashboardTitle}</div>
+  <div class="dashboard-container">
+    <mdc-layout-grid class="grid">
+      <mdc-layout-grid-inner>
+        <mdc-layout-grid-cell repeat.for="feature of features">
+          <mdc-card class="card">
+            <mdc-card-primary-action click.trigger="navigateTo(feature.route)">
+              <div class="card__primary">
+                <h2 class="card__title" mdc-headline6>${feature.title}</h2>
+                <h3 class="card__subtitle" mdc-subtitle2>
+                  ${feature.description}
+                </h3>
+              </div>
+            </mdc-card-primary-action>
+          </mdc-card>
+        </mdc-layout-grid-cell>
+      </mdc-layout-grid-inner>
+    </mdc-layout-grid>
+  </div>
+</template>

@@ -11,7 +11,10 @@ export class StudentDashboard implements IRouteableComponent {
   // ******************
   // ***** FIELDS *****
   // ******************
-  features = [
+
+  public dashboardTitle = "Student Dashboard";
+
+  public features = [
     {
       title: "My Courses",
       description: "View and manage your courses",
@@ -33,11 +36,4 @@ export class StudentDashboard implements IRouteableComponent {
       route: "in-progress",
     },
   ];
-
-  // *******************
-  // ***** METHODS *****
-  // *******************
-  navigateTo(route: string) {
-    // window.location.href = `#/${route}`;
-  }
 }

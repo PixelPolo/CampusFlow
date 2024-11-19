@@ -11,6 +11,9 @@ export class AdministrativeDashboard implements IRouteableComponent {
   // ******************
   // ***** FIELDS *****
   // ******************
+
+  public dashboardTitle = "Administrative Dashboard";
+
   public features = [
     {
       title: "Send Invoices",
@@ -18,13 +21,13 @@ export class AdministrativeDashboard implements IRouteableComponent {
       route: "in-progress",
     },
     {
-      title: "Automated Payment Reminders",
-      description: "Schedule and send automated payment reminders",
+      title: "Payment Reminders",
+      description: "Schedule and send payment reminders",
       route: "in-progress",
     },
     {
-      title: "Track Payment Statuses",
-      description: "Check and manage outstanding payment statuses",
+      title: "Track Payment",
+      description: "Check and manage payments",
       route: "in-progress",
     },
     {
@@ -33,9 +36,8 @@ export class AdministrativeDashboard implements IRouteableComponent {
       route: "in-progress",
     },
     {
-      title: "Plan Facility Maintenance",
-      description:
-        "Coordinate facility maintenance schedules with class timetables",
+      title: "Facility Management",
+      description: "Facility maintenance schedules",
       route: "in-progress",
     },
     {
@@ -44,12 +46,4 @@ export class AdministrativeDashboard implements IRouteableComponent {
       route: "in-progress",
     },
   ];
-
-  // *******************
-  // ***** METHODS *****
-  // *******************
-
-  navigateTo(route: string) {
-    window.location.href = `#/${route}`;
-  }
 }

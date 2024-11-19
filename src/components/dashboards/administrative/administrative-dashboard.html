@@ -1,28 +1,7 @@
 <template>
-  <require from="../dashboard.scss"></require>
-  <div class="dashboard-container">
-    <div mdc-headline3>Administrative Dashboard</div>
-    <!--
-      <mdc-layout-grid>
-        <mdc-layout-grid-inner>
-          <mdc-layout-grid-cell
-          repeat.for="feature of features"
-          class="feature-card"
-          span="6"
-          span-gt-sm="6"
-          span-sm="12"
-          >
-          <mdc-card click.delegate="navigateTo(feature.route)">
-            <mdc-card-primary-action>
-              <div class="card-content">
-                <h3>${feature.title}</h3>
-                <p>${feature.description}</p>
-              </div>
-            </mdc-card-primary-action>
-          </mdc-card>
-        </mdc-layout-grid-cell>
-      </mdc-layout-grid-inner>
-    </mdc-layout-grid>
-    -->
-  </div>
+  <require from="../dashboard"></require>
+  <dashboard
+    dashboard-title.bind="dashboardTitle"
+    features.bind="features"
+  ></dashboard>
 </template>

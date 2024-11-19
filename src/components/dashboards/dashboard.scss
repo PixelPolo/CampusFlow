@@ -1,25 +1,46 @@
+@use "@material/theme";
+
+.title {
+  margin-top: 20px;
+  text-align: center;
+  font-weight: bold;
+}
+
 .dashboard-container {
   padding: 20px;
   max-width: 900px;
   margin: auto;
 
-  .feature-card {
-    width: 100%;
-    max-width: 400px;
-    cursor: pointer;
-    transition: transform 0.2s;
+  .grid {
+    background: rgba(0, 0, 0, 0.1);
+    min-width: 360px;
+    border-radius: 10px;
 
-    &:hover {
-      transform: scale(1.05);
-    }
-
-    mdc-card {
-      width: 100%;
+    .mdc-layout-grid__cell {
+      height: 120px;
     }
   }
 
-  .card-content {
-    padding: 20px;
-    height: 100px;
+  .card {
+    width: 400px;
+  }
+
+  mdc-card-primary-action {
+    /* on hover effects are applied here */
+    width: 100%;
+    height: 100%;
+  }
+
+  .card__primary {
+    padding: 1rem;
+  }
+
+  .card__title {
+    margin: 0;
+  }
+
+  .card__subtitle {
+    @include theme.property(color, text-secondary-on-background);
+    margin: 0;
   }
 }

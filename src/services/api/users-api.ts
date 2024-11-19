@@ -7,7 +7,7 @@ import { StatusResponse } from "./rest-full.model";
 
 // Interface
 export interface User {
-  id?: number;
+  user_id?: number;
   password: string;
   roles: string[];
   firstName: string;
@@ -24,7 +24,7 @@ function genID() {
 // Mock Data
 let users: User[] = [
   {
-    id: genID(),
+    user_id: genID(),
     password: "123",
     roles: ["student"],
     firstName: "Jack",
@@ -32,7 +32,7 @@ let users: User[] = [
     email: "jack.doe@student.com",
   },
   {
-    id: genID(),
+    user_id: genID(),
     password: "123",
     roles: ["professor"],
     firstName: "Fabian",
@@ -40,7 +40,7 @@ let users: User[] = [
     email: "fabian.smith@university.com",
   },
   {
-    id: genID(),
+    user_id: genID(),
     password: "123",
     roles: ["administrative"],
     firstName: "Jane",
@@ -72,7 +72,7 @@ export class UsersAPI {
         if (userExists) {
           reject({ status: 409, message: "Email already taken" });
         } else {
-          newUser.id = genID();
+          newUser.user_id = genID();
           users.push(newUser);
           resolve({ status: 201, data: newUser });
         }
@@ -93,7 +93,7 @@ export class UsersAPI {
   public getUserById(id: number): Promise<StatusResponse<User>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const user = users.find((user) => user.id === id);
+        const user = users.find((user) => user.user_id === id);
         if (user) {
           resolve({ status: 200, data: user });
         } else {
@@ -124,7 +124,7 @@ export class UsersAPI {
   ): Promise<StatusResponse<User>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = users.findIndex((user) => user.id === id);
+        const index = users.findIndex((user) => user.user_id === id);
         if (index !== -1) {
           users[index] = { ...users[index], ...updatedUser };
           resolve({ status: 200, data: users[index] });
@@ -139,7 +139,7 @@ export class UsersAPI {
   public deleteUser(id: number): Promise<StatusResponse<null>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = users.findIndex((user) => user.id === id);
+        const index = users.findIndex((user) => user.user_id === id);
         if (index !== -1) {
           users.splice(index, 1);
           resolve({ status: 204, message: "User deleted successfully" });
