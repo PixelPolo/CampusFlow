@@ -1,9 +1,9 @@
-import { Class, singleton } from "aurelia";
+import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
-// *****************
+// **********************
 // ***** CLASSROOMS *****
-// *****************
+// **********************
 
 // Interface
 export interface Classroom {
