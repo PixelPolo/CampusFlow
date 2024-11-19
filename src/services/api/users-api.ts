@@ -103,7 +103,7 @@ export class UsersAPI {
     });
   }
 
-  // GET /users/email/:email
+  // GET /users?email=:email
   public getUserByEmail(email: string): Promise<StatusResponse<User>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

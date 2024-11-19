@@ -108,7 +108,7 @@ export class ProgramsAPI {
     });
   }
 
-  // GET /program/name/:name
+  // GET /programs?name=:name
   public getProgramByName(name: string): Promise<StatusResponse<Program>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
