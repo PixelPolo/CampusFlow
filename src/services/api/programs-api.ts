@@ -1,9 +1,9 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
-// *******************
-// ***** PROGRAM *****
-// *******************
+// ********************
+// ***** PROGRAMS *****
+// ********************
 
 // Interface
 export interface Program {
@@ -52,9 +52,9 @@ let programs: Program[] = [
   },
 ];
 
-// ******************************************
-// ***** PROGRAM API RESTful SIMULATION *****
-// ******************************************
+// *******************************************
+// ***** PROGRAMS API RESTful SIMULATION *****
+// *******************************************
 
 @singleton()
 export class ProgramsAPI {
@@ -67,7 +67,7 @@ export class ProgramsAPI {
   // ***** METHODS *****
   // *******************
 
-  // POST /program
+  // POST /programs
   public createProgram(newProgram: Program): Promise<StatusResponse<Program>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -122,7 +122,7 @@ export class ProgramsAPI {
     });
   }
 
-  // PATCH /program/:id
+  // PATCH /programs/:id
   public updateProgram(
     id: number,
     updatedProgram: Partial<Program>
@@ -142,7 +142,7 @@ export class ProgramsAPI {
     });
   }
 
-  // DELETE /program/:id
+  // DELETE /programs/:id
   public deleteProgram(id: number): Promise<StatusResponse<null>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
