@@ -1,6 +1,7 @@
-import { observable, resolve } from "aurelia";
+import { observable, resolve, singleton } from "aurelia";
 import { User, UsersAPI } from "../api/users-api";
 
+@singleton()
 export class AuthService {
   // ********************
   // ***** SERVICES *****
