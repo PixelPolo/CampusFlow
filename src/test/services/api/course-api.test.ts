@@ -37,7 +37,7 @@ describe("CourseAPI", () => {
 
   // getCourseById
   it("should fetch a course by ID", async () => {
-    const response: StatusResponse<Course> = await courseAPI.getcoursesById(1);
+    const response: StatusResponse<Course> = await courseAPI.getCoursesById(1);
 
     expect(response.status).toBe(200);
     expect(response.data.course_id).toBe(1);
@@ -45,7 +45,7 @@ describe("CourseAPI", () => {
 
   // 404 by ID
   it("should return 404 for a non-existent course by ID", async () => {
-    await expect(courseAPI.getcoursesById(99999)).rejects.toEqual({
+    await expect(courseAPI.getCoursesById(99999)).rejects.toEqual({
       status: 404,
       message: "Course not found",
     });

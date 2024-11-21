@@ -2,13 +2,13 @@ import { CourseClassroomAPI } from "../../../services/api/course-classroom-api";
 import { StatusResponse } from "../../../services/api/rest-full.model";
 import { CourseClassroom } from "../../../services/api/course-classroom-api";
 
-// Tests pour CourseClassroomAPI
+// Tests for CourseClassroomAPI
 describe("CourseClassroomAPI", () => {
   let courseClassroomAPI: CourseClassroomAPI;
 
   beforeEach(() => {
     courseClassroomAPI = new CourseClassroomAPI();
-    (courseClassroomAPI as any).latency = 0; // Simulation de la latence à 0 pour des tests plus rapides
+    (courseClassroomAPI as any).latency = 0;
   });
 
   // addClassroomToCourse
@@ -64,8 +64,8 @@ describe("CourseClassroomAPI", () => {
 
   // 404 when removing a non-existent relation
   it("should return 404 when trying to remove a non-existent classroom from a course", async () => {
-    const courseId = 9999; // Un cours qui n'existe pas
-    const classroomId = 9999; // Une salle de classe qui n'existe pas
+    const courseId = 9999;
+    const classroomId = 9999;
 
     await expect(
       courseClassroomAPI.removeClassroomFromCourse(courseId, classroomId)

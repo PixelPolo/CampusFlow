@@ -1,9 +1,9 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
-// ********************
+// ****************************
 // ***** COURSE-CLASSROOM *****
-// ********************
+// ****************************
 
 export interface CourseClassroom {
   course_id: number;
@@ -32,9 +32,9 @@ let courseClassrooms: CourseClassroom[] = [
   { course_id: 10, classroom_id: 9 }, // Course 10 with classroom 9
 ];
 
-// ****************************************
+// *******************************************
 // ***** COURSE-CLASSROOM API SIMULATION *****
-// ****************************************
+// *******************************************
 
 @singleton()
 export class CourseClassroomAPI {

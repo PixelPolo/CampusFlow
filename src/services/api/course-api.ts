@@ -1,9 +1,9 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 
-// *****************
+// ******************
 // ***** COURSE *****
-// *****************
+// ******************
 
 // Interface
 export interface Course {
@@ -72,9 +72,9 @@ let courses: Course[] = [
   },
 ];
 
-// ****************************************
+// ******************************************
 // ***** COURSES API RESTful SIMULATION *****
-// ****************************************
+// ******************************************
 
 @singleton()
 export class CourseAPI {
@@ -115,7 +115,7 @@ export class CourseAPI {
   }
 
   // GET /courses/:id
-  public getcoursesById(id: number): Promise<StatusResponse<Course>> {
+  public getCoursesById(id: number): Promise<StatusResponse<Course>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const course = courses.find((course) => course.course_id === id);
