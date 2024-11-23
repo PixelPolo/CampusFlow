@@ -83,6 +83,20 @@ export class CourseClassroomAPI {
     });
   }
 
+  // GET /course-classrooms/:classroomId
+  public getCourseByClassroom(
+    classroomId: number
+  ): Promise<StatusResponse<CourseClassroom[]>> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const courseClassroomsForCourse = courseClassrooms.filter(
+          (relation) => relation.classroom_id === classroomId
+        );
+        resolve({ status: 200, data: courseClassroomsForCourse });
+      }, this.latency);
+    });
+  }
+
   // DELETE /course-classrooms/:course_id/:classroom_id
   public removeClassroomFromCourse(
     courseId: number,
