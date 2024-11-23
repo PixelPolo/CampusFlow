@@ -1,4 +1,4 @@
-import { CourseClassroomAPI } from "../../../services/api/course-classroom-api"; // Assurez-vous que le chemin est correct
+import { CourseClassroomAPI } from "../../../services/api/course-classroom-api";
 import { StatusResponse } from "../../../services/api/rest-full.model";
 import { CourseClassroom } from "../../../services/api/course-classroom-api";
 
