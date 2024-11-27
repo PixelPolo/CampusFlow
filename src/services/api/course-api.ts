@@ -1,5 +1,11 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
+import { CourseClassroomAPI } from "./course-classroom-api";
+import { resolve } from "aurelia";
+import { Classroom, ClassroomAPI } from "./classrooms-api";
+import { CourseProgramAPI } from "./course-program-api";
+import { Program, ProgramsAPI } from "./programs-api";
+import { Schedule, SchedulesAPI } from "./schedules-api";
 
 // ******************
 // ***** COURSE *****
@@ -10,6 +16,13 @@ export interface Course {
   course_id?: number;
   name: string;
   user_id?: number; // Professor
+}
+
+// Course with joins
+export interface FullCourse extends Course {
+  classrooms: Classroom;
+  programs: Program;
+  schedules: Schedule;
 }
 
 // ID Generation
@@ -170,6 +183,79 @@ export class CourseAPI {
           resolve({ status: 204, message: "Course deleted successfully" });
         } else {
           reject({ status: 404, message: "Course not found" });
+        }
+      }, this.latency);
+    });
+  }
+
+  // ***************************************
+  // ***** EXTRA ROUTES WITH SQL JOINS *****
+  // ***************************************
+
+  readonly courseClassroomAPI: CourseClassroomAPI = resolve(CourseClassroomAPI);
+  readonly classroomAPI: ClassroomAPI = resolve(ClassroomAPI);
+  readonly courseProgramAPI: CourseProgramAPI = resolve(CourseProgramAPI);
+  readonly programAPI: ProgramsAPI = resolve(ProgramsAPI);
+  readonly schedulesAPI: SchedulesAPI = resolve(SchedulesAPI);
+
+  // GET /fullCourses
+  public async getFullCourses(): Promise<StatusResponse<any[]>> {
+    return new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        try {
+          // Get all courses
+          const coursesResponse = await this.getCourses();
+          const courses = coursesResponse.data;
+
+          // Do joins with API
+          const result = await Promise.all(
+            courses.map(async (course) => {
+              // Get Classrooms linked to the course
+              const classroomsResponse =
+                await this.courseClassroomAPI.getClassroomsByCourse(
+                  course.course_id!
+                );
+              const linkedClassrooms = await Promise.all(
+                classroomsResponse.data.map(
+                  async (rel) =>
+                    (
+                      await this.classroomAPI.getClassroomById(rel.classroom_id)
+                    ).data
+                )
+              );
+
+              // Get programs linked to the course
+              const programsResponse =
+                await this.courseProgramAPI.getProgramsByCourse(
+                  course.course_id!
+                );
+              const linkedPrograms = await Promise.all(
+                programsResponse.data.map(
+                  async (rel) =>
+                    (
+                      await this.programAPI.getProgramById(rel.program_id)
+                    ).data
+                )
+              );
+
+              // Get schedules linked to the course
+              const schedules = (await this.schedulesAPI.getSchedules()).data;
+              const linkedSchedules = schedules.filter(
+                (schedule) => schedule.course_id === course.course_id
+              );
+
+              return {
+                ...course,
+                classrooms: linkedClassrooms,
+                programs: linkedPrograms,
+                schedules: linkedSchedules,
+              };
+            })
+          );
+
+          resolve({ status: 200, data: result });
+        } catch (error) {
+          reject({ status: 500, message: "Error fetching data", error });
         }
       }, this.latency);
     });

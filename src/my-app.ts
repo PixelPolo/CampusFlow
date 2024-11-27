@@ -1,10 +1,10 @@
 import { IRoute, IRouter } from "@aurelia/router";
-import { Login } from "./components/login/login";
-import { About } from "./components/about/about";
-import { StudentDashboard } from "./components/dashboards/student/student-dashboard";
-import { ProfessorDashboard } from "./components/dashboards/professor/professor-dashboard";
-import { AdministrativeDashboard } from "./components/dashboards/administrative/administrative-dashboard";
-import { InProgress } from "./components/in-progress/in-progress";
+import { Login } from "./views/login/login";
+import { About } from "./views/about/about";
+import { StudentDashboard } from "./views/dashboards/student/student-dashboard";
+import { ProfessorDashboard } from "./views/dashboards/professor/professor-dashboard";
+import { AdministrativeDashboard } from "./views/dashboards/administrative/administrative-dashboard";
+import { InProgress } from "./views/in-progress/in-progress";
 import { AuthService } from "./services/auth/auth";
 import { resolve } from "aurelia";
 import { watch } from "aurelia";

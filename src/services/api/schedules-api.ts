@@ -75,6 +75,9 @@ let schedules: Schedule[] = [
 
 @singleton()
 export class SchedulesAPI {
+  static filter(arg0: (schedule: any) => boolean) {
+    throw new Error("Method not implemented.");
+  }
   // ******************
   // ***** FIELDS *****
   // ******************
