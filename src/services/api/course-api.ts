@@ -9,7 +9,7 @@ import { StatusResponse } from "./rest-full.model";
 export interface Course {
   course_id?: number;
   name: string;
-  user_id?: number;
+  user_id?: number; // Professor
 }
 
 // ID Generation
@@ -128,7 +128,7 @@ export class CourseAPI {
     });
   }
 
-  // GET /course?name=:name
+  // GET /courses?name=:name
   public getCourseByName(name: string): Promise<StatusResponse<Course>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

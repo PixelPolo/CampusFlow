@@ -11,7 +11,7 @@ export interface CourseClassroom {
 }
 
 // Mock Data for relation between courses and classrooms
-let courseClassrooms: CourseClassroom[] = [
+let courseClassroomRels: CourseClassroom[] = [
   { course_id: 1, classroom_id: 1 }, // Course 1 with classroom 1
   { course_id: 1, classroom_id: 2 }, // Course 1 with classroom 2
   { course_id: 2, classroom_id: 3 }, // Course 2 with classroom 3
@@ -40,14 +40,14 @@ let courseClassrooms: CourseClassroom[] = [
 export class CourseClassroomAPI {
   private latency = 1000;
 
-  // POST /course-classrooms
+  // POST /course-classroom
   public addClassroomToCourse(
     courseId: number,
     classroomId: number
   ): Promise<StatusResponse<CourseClassroom>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const existingRelation = courseClassrooms.some(
+        const existingRelation = courseClassroomRels.some(
           (relation) =>
             relation.course_id === courseId &&
             relation.classroom_id === classroomId
@@ -62,55 +62,55 @@ export class CourseClassroomAPI {
             course_id: courseId,
             classroom_id: classroomId,
           };
-          courseClassrooms.push(newRelation);
+          courseClassroomRels.push(newRelation);
           resolve({ status: 201, data: newRelation });
         }
       }, this.latency);
     });
   }
 
-  // GET /course-classrooms/:course_id
+  // GET /course-classroom/:course_id
   public getClassroomsByCourse(
     courseId: number
   ): Promise<StatusResponse<CourseClassroom[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseClassroomsForCourse = courseClassrooms.filter(
+        const classrooms = courseClassroomRels.filter(
           (relation) => relation.course_id === courseId
         );
-        resolve({ status: 200, data: courseClassroomsForCourse });
+        resolve({ status: 200, data: classrooms });
       }, this.latency);
     });
   }
 
-  // GET /course-classrooms/:classroomId
-  public getCourseByClassroom(
+  // GET /course-classroom/:classroom_id
+  public getCoursesByClassroom(
     classroomId: number
   ): Promise<StatusResponse<CourseClassroom[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseClassroomsForCourse = courseClassrooms.filter(
+        const courses = courseClassroomRels.filter(
           (relation) => relation.classroom_id === classroomId
         );
-        resolve({ status: 200, data: courseClassroomsForCourse });
+        resolve({ status: 200, data: courses });
       }, this.latency);
     });
   }
 
-  // DELETE /course-classrooms/:course_id/:classroom_id
+  // DELETE /course-classroom/:course_id/:classroom_id
   public removeClassroomFromCourse(
     courseId: number,
     classroomId: number
   ): Promise<StatusResponse<null>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = courseClassrooms.findIndex(
+        const index = courseClassroomRels.findIndex(
           (relation) =>
             relation.course_id === courseId &&
             relation.classroom_id === classroomId
         );
         if (index !== -1) {
-          courseClassrooms.splice(index, 1);
+          courseClassroomRels.splice(index, 1);
           resolve({
             status: 204,
             message: "Classroom removed from course successfully",
