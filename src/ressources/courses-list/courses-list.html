@@ -1,0 +1,15 @@
+<template>
+  <require from="./courses-list.scss"></require>
+  <div class="courses-container">
+    <mdc-list>
+      <mdc-list-item
+        repeat.for="course of fullCourses"
+        class.bind="selectedCourse === course ? 'selected' : ''"
+        click.trigger="selectCourse(course)"
+      >
+        <span>${course.name}</span>
+        <mdc-icon mdc-list-item-trailing>info</mdc-icon>
+      </mdc-list-item>
+    </mdc-list>
+  </div>
+</template>

@@ -8,6 +8,7 @@ import { InProgress } from "./views/in-progress/in-progress";
 import { AuthService } from "./services/auth/auth";
 import { resolve } from "aurelia";
 import { watch } from "aurelia";
+import { ViewCourses } from "./views/ViewCourses/view-courses";
 
 export class MyApp {
   // ********************
@@ -80,6 +81,14 @@ export class MyApp {
       data: {
         nav: true,
         requiredRoles: ["administrative"],
+      },
+    },
+    {
+      component: ViewCourses,
+      path: "courses",
+      title: "Courses",
+      data: {
+        nav: false,
       },
     },
   ];
