@@ -10,10 +10,9 @@
       <div
         repeat.for="course of courses"
         class.bind="selectedCourse === course ? 'selected' : ''"
-        click.trigger="selectCourse(course)"
       >
         <!-- Course list item -->
-        <mdc-list-item>
+        <mdc-list-item click.trigger="selectCourse(course)">
           <span>${course.name}</span>
           <mdc-icon mdc-list-item-trailing>info</mdc-icon>
         </mdc-list-item>

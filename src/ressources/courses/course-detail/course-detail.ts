@@ -17,8 +17,20 @@ export class CourseDetail implements ICustomElementViewModel {
 
   public canEdit: boolean;
 
+  public isEditing: boolean = false;
+
+  // *******************
+  // ***** METHODS *****
+  // *******************
   attached() {
     console.log(this.course);
-    this.canEdit = this.authService.getUserRoles().includes("professor");
+    // this.canEdit = this.authService.getUserRoles().includes("professor");
+    // Dev only
+    this.isEditing = true;
+    this.canEdit = true; 
+  }
+
+  edit() {
+    this.isEditing = true;
   }
 }

@@ -1,7 +1,7 @@
-import { bindable } from "aurelia";
+import { bindable, ICustomElementViewModel } from "aurelia";
 import { FullCourse } from "../../../services/api/course-api";
 
-export class CourseForm {
+export class CourseForm implements ICustomElementViewModel {
   // ******************
   // ***** FIELDS *****
   // ******************
