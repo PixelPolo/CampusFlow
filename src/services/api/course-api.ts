@@ -36,52 +36,52 @@ let courses: Course[] = [
   {
     course_id: 1,
     name: "Introduction to Computer Science",
-    user_id: 101,
+    user_id: 1,
   },
   {
     course_id: 2,
     name: "Advanced Data Structures",
-    user_id: 102,
+    user_id: 2,
   },
   {
     course_id: 3,
     name: "Web Development",
-    user_id: 103,
+    user_id: 3,
   },
   {
     course_id: 4,
     name: "Machine Learning",
-    user_id: 104,
+    user_id: 1,
   },
   {
     course_id: 5,
     name: "Database Systems",
-    user_id: 105,
+    user_id: 2,
   },
   {
     course_id: 6,
     name: "Cloud Computing",
-    user_id: 106,
+    user_id: 3,
   },
   {
     course_id: 7,
     name: "Operating Systems",
-    user_id: 107,
+    user_id: 1,
   },
   {
     course_id: 8,
     name: "Artificial Intelligence",
-    user_id: 108,
+    user_id: 2,
   },
   {
     course_id: 9,
     name: "Software Engineering",
-    user_id: 109,
+    user_id: 3,
   },
   {
     course_id: 10,
     name: "Computer Networks",
-    user_id: 110,
+    user_id: 1,
   },
 ];
 

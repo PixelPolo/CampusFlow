@@ -1,15 +1,24 @@
 <template>
-  <require from="./courses-list.scss"></require>
+  <require from="/src/ressources/loader/loader"></require>
+  <div class="loader-container" if.bind="courses.length === 0">
+    <loader></loader>
+  </div>
   <div class="courses-container">
     <mdc-list>
-      <mdc-list-item
-        repeat.for="course of fullCourses"
+      <!-- Course list -->
+      <div
+        repeat.for="course of courses"
         class.bind="selectedCourse === course ? 'selected' : ''"
         click.trigger="selectCourse(course)"
       >
-        <span>${course.name}</span>
-        <mdc-icon mdc-list-item-trailing>info</mdc-icon>
-      </mdc-list-item>
+        <!-- Course list item -->
+        <mdc-list-item>
+          <span>${course.name}</span>
+          <mdc-icon mdc-list-item-trailing>info</mdc-icon>
+        </mdc-list-item>
+        <!-- Course Detail if selected -->
+        <!---TODO : Popup course-form -->
+      </div>
     </mdc-list>
   </div>
 </template>

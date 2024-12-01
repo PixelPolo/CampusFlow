@@ -18,7 +18,7 @@ export class StudentDashboard implements IRouteableComponent {
     {
       title: "My Courses",
       description: "View and manage your courses",
-      route: "in-progress",
+      route: "student-courses",
     },
     {
       title: "Upcoming Exams",

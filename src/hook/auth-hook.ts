@@ -24,7 +24,7 @@ export class AuthHook {
     instruction: RoutingInstruction,
     navigation: Navigation
   ) {
-    // UNCOMMENT FOR PROD
+    // DEV ONLY
     return true
 
     if (!this.authService.isAuthenticated()) {

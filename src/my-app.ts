@@ -8,7 +8,8 @@ import { InProgress } from "./views/in-progress/in-progress";
 import { AuthService } from "./services/auth/auth";
 import { resolve } from "aurelia";
 import { watch } from "aurelia";
-import { ViewCourses } from "./views/ViewCourses/view-courses";
+import { StudentCourses } from "./views/courses/student/student-courses";
+import { ProfessorCourses } from "./views/courses/professor/professor-courses";
 
 export class MyApp {
   // ********************
@@ -54,6 +55,7 @@ export class MyApp {
       title: "In Progress",
       data: {
         nav: false,
+        public: true
       },
     },
     {
@@ -84,13 +86,24 @@ export class MyApp {
       },
     },
     {
-      component: ViewCourses,
-      path: "courses",
+      component: ProfessorCourses,
+      path: "professor-courses",
       title: "Courses",
       data: {
-        nav: false,
+        nav: true,
+        requiredRoles: ["professor"],
       },
     },
+    {
+      component: StudentCourses,
+      path: "student-courses",
+      title: "Courses",
+      data: {
+        nav: true,
+        requiredRoles: ["student"],
+      },
+    },
+
   ];
 
   public allowedRoutes: IRoute[] = [];

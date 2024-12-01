@@ -50,9 +50,16 @@ export class AuthService {
     return !!this.currentUser;
   }
 
-  // Getters for user roles
+  // Getter for user roles
   public getUserRoles() {
     if (!this.currentUser) return [""];
     else return this.currentUser.roles;
+  }
+
+  // Getter for user id
+  public getUserID(): number {
+    // DEV ONLY
+    return 2;
+    // return this.currentUser.user_id;
   }
 }

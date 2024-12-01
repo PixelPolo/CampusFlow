@@ -1,17 +1,6 @@
-@use "@material/circular-progress/mdc-circular-progress";
-
 .content {
   text-align: center;
   margin: auto;
   margin-top: 250px;
   width: 100%;
-
-  .mdc-circular-progress {
-    --mdc-theme-primary: #ffffff;
-    padding-top: 50px;
-  }
-}
-
-.h1 {
-  text-align: center;
 }

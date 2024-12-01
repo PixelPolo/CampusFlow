@@ -23,8 +23,7 @@ export class ProfessorDashboard implements IRouteableComponent {
     {
       title: "View Courses",
       description: "Manage and modify courses",
-      route: "courses",
-      // route: "in-progress",
+      route: "professor-courses",
     },
     {
       title: "View Attendees",

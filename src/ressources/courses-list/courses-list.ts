@@ -14,7 +14,7 @@ export class CoursesList implements ICustomElementViewModel {
   // ******************
 
   @bindable({ type: Array })
-  public fullCourses: FullCourse[] = [];
+  public courses: FullCourse[];
 
   @bindable({})
   public selectedCourse: FullCourse | null = null;
@@ -22,13 +22,12 @@ export class CoursesList implements ICustomElementViewModel {
   // *******************
   // ***** METHODS *****
   // *******************
-
-  async binding(): Promise<void> {
-    this.fullCourses = (await this.courseAPI.getFullCourses()).data;
-    console.table(this.fullCourses);
-  }
-
   selectCourse(course: FullCourse): void {
     this.selectedCourse = course;
+  }
+
+  // For debugging
+  coursesChanged(newValue: FullCourse[] | null, oldValue: FullCourse[] | null) {
+    console.table(newValue);
   }
 }
