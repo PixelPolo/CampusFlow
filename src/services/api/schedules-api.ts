@@ -26,6 +26,7 @@ function isValidTimeFormat(time: string): boolean {
 export interface Schedule {
   schedule_id?: number;
   course_id: number;
+  classroom_id: number;
   day: DayOfWeek;
   start_time: string;
   end_time: string;
@@ -42,6 +43,7 @@ let schedules: Schedule[] = [
   {
     schedule_id: 1,
     course_id: 1,
+    classroom_id: 1,
     day: DayOfWeek.Monday,
     start_time: "09:00",
     end_time: "10:30",
@@ -49,6 +51,7 @@ let schedules: Schedule[] = [
   {
     schedule_id: 2,
     course_id: 1,
+    classroom_id: 2,
     day: DayOfWeek.Wednesday,
     start_time: "09:00",
     end_time: "10:30",
@@ -56,6 +59,7 @@ let schedules: Schedule[] = [
   {
     schedule_id: 3,
     course_id: 2,
+    classroom_id: 1,
     day: DayOfWeek.Tuesday,
     start_time: "14:00",
     end_time: "15:30",
@@ -63,6 +67,7 @@ let schedules: Schedule[] = [
   {
     schedule_id: 4,
     course_id: 3,
+    classroom_id: 3,
     day: DayOfWeek.Friday,
     start_time: "10:00",
     end_time: "12:00",
@@ -75,9 +80,6 @@ let schedules: Schedule[] = [
 
 @singleton()
 export class SchedulesAPI {
-  static filter(arg0: (schedule: any) => boolean) {
-    throw new Error("Method not implemented.");
-  }
   // ******************
   // ***** FIELDS *****
   // ******************
@@ -104,7 +106,7 @@ export class SchedulesAPI {
         // Conflict check
         const scheduleConflict = schedules.some(
           (schedule) =>
-            schedule.course_id === newSchedule.course_id &&
+            schedule.classroom_id === newSchedule.classroom_id &&
             schedule.day === newSchedule.day &&
             !(
               newSchedule.end_time <= schedule.start_time ||

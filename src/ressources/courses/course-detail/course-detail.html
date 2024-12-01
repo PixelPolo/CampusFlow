@@ -13,26 +13,25 @@
         </ul>
       </div>
 
-      <!-- Classrooms -->
-      <div>
-        <div mdc-headline6>Classrooms</div>
-        <ul>
-          <li repeat.for="classroom of course.classrooms">
-            <div mdc-body1>${classroom.name}</div>
-            <div mdc-body2>Capacity: ${classroom.capacity}</div>
-          </li>
-        </ul>
-      </div>
-
       <!-- Schedules -->
       <div>
         <div mdc-headline6>Schedules</div>
         <ul>
           <li repeat.for="schedule of course.schedules">
-            <div mdc-body1><strong>${schedule.day}</strong></div>
+            <div mdc-body1>
+              <strong>${schedule.day}</strong>
+            </div>
             <div mdc-body2>${schedule.start_time} - ${schedule.end_time}</div>
+            <div mdc-body2>Classroom: ${schedule.classroom.name} - Capacity: ${schedule.classroom.capacity}</div>
           </li>
         </ul>
+      </div>
+
+      <!-- Professor -->
+      <div>
+        <div mdc-headline6>Professor</div>
+        <div mdc-body1>${course.professor.firstName} ${course.professor.lastName}</div>
+        <div mdc-body2>Email: ${course.professor.email}</div>
       </div>
     </div>
 

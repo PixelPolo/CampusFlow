@@ -1,3 +1,4 @@
+import { UsersAPI } from "./users-api";
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
 import { CourseClassroomAPI } from "./course-classroom-api";
@@ -20,9 +21,14 @@ export interface Course {
 
 // Course with joins
 export interface FullCourse extends Course {
-  classrooms: Classroom;
-  programs: Program;
-  schedules: Schedule;
+  classrooms: Classroom[];
+  programs: Program[];
+  schedules: Schedule[];
+  professor: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 // ID Generation
@@ -197,9 +203,10 @@ export class CourseAPI {
   readonly courseProgramAPI: CourseProgramAPI = resolve(CourseProgramAPI);
   readonly programAPI: ProgramsAPI = resolve(ProgramsAPI);
   readonly schedulesAPI: SchedulesAPI = resolve(SchedulesAPI);
+  readonly usersAPI: UsersAPI = resolve(UsersAPI);
 
   // GET /fullCourses
-  public async getFullCourses(): Promise<StatusResponse<any[]>> {
+  public async getFullCourses(): Promise<StatusResponse<FullCourse[]>> {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
@@ -240,15 +247,30 @@ export class CourseAPI {
 
               // Get schedules linked to the course
               const schedules = (await this.schedulesAPI.getSchedules()).data;
-              const linkedSchedules = schedules.filter(
-                (schedule) => schedule.course_id === course.course_id
+              const linkedSchedules = await Promise.all(
+                schedules
+                  .filter((schedule) => schedule.course_id === course.course_id)
+                  .map(async (schedule) => {
+                    // Join schedule with classroom
+                    const classroom = await this.classroomAPI.getClassroomById(
+                      schedule.classroom_id
+                    );
+                    return { ...schedule, classroom: classroom.data };
+                  })
               );
+
+              // Get professor (user) details using a User API or service
+              const professorResponse = await this.usersAPI.getUserById(
+                course.user_id!
+              );
+              const professor = professorResponse.data;
 
               return {
                 ...course,
                 classrooms: linkedClassrooms,
                 programs: linkedPrograms,
                 schedules: linkedSchedules,
+                professor, // Include professor in the result
               };
             })
           );
