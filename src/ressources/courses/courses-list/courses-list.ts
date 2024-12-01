@@ -1,5 +1,5 @@
 import { bindable, ICustomElementViewModel } from "aurelia";
-import { CourseAPI, FullCourse } from "../../services/api/course-api";
+import { CourseAPI, FullCourse } from "../../../services/api/course-api";
 import { resolve } from "aurelia";
 
 export class CoursesList implements ICustomElementViewModel {
@@ -16,14 +16,13 @@ export class CoursesList implements ICustomElementViewModel {
   @bindable({ type: Array })
   public courses: FullCourse[];
 
-  @bindable({})
   public selectedCourse: FullCourse | null = null;
 
   // *******************
   // ***** METHODS *****
   // *******************
-  selectCourse(course: FullCourse): void {
-    this.selectedCourse = course;
+  selectCourse(course: FullCourse) {
+    this.selectedCourse = this.selectedCourse === course ? null : course;
   }
 
   // For debugging

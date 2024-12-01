@@ -13,6 +13,7 @@ export interface CourseProgram {
 // Mock Data for relation between courses and programs
 let coursePrograms: CourseProgram[] = [
   { course_id: 1, program_id: 1 },
+  { course_id: 1, program_id: 2 },
   { course_id: 2, program_id: 2 },
   { course_id: 3, program_id: 3 },
   { course_id: 4, program_id: 4 },

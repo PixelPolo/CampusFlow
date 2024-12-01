@@ -8,7 +8,7 @@ import { CircularProgressConfiguration } from "@aurelia-mdc-web/circular-progres
 Aurelia.register(
   RouterConfiguration.customize({ useUrlFragmentHash: true, useHref: false }),
   AllConfiguration,
-  CircularProgressConfiguration
+  CircularProgressConfiguration,
 )
 
   // To use HTML5 pushState routes, replace previous line with the following customized router config.
