@@ -1,9 +1,8 @@
 import { UsersAPI } from "./users-api";
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
-import { CourseClassroomAPI } from "./course-classroom-api";
 import { resolve } from "aurelia";
-import { Classroom, ClassroomAPI } from "./classrooms-api";
+import { ClassroomAPI } from "./classrooms-api";
 import { CourseProgramAPI } from "./course-program-api";
 import { Program, ProgramsAPI } from "./programs-api";
 import { Schedule, SchedulesAPI } from "./schedules-api";
@@ -96,7 +95,7 @@ let courses: Course[] = [
 // ******************************************
 
 @singleton()
-export class CourseAPI {
+export class CoursesAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
@@ -198,7 +197,6 @@ export class CourseAPI {
   // ***** EXTRA ROUTES WITH SQL JOINS *****
   // ***************************************
 
-  readonly courseClassroomAPI: CourseClassroomAPI = resolve(CourseClassroomAPI);
   readonly classroomAPI: ClassroomAPI = resolve(ClassroomAPI);
   readonly courseProgramAPI: CourseProgramAPI = resolve(CourseProgramAPI);
   readonly programAPI: ProgramsAPI = resolve(ProgramsAPI);

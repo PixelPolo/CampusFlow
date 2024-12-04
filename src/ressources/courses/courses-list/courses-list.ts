@@ -1,5 +1,5 @@
 import { bindable, ICustomElementViewModel } from "aurelia";
-import { CourseAPI, FullCourse } from "../../../services/api/course-api";
+import { CoursesAPI, FullCourse } from "../../../services/api/course-api";
 import { resolve } from "aurelia";
 
 export class CoursesList implements ICustomElementViewModel {
@@ -7,7 +7,7 @@ export class CoursesList implements ICustomElementViewModel {
   // ***** SERVICES *****
   // ********************
 
-  readonly courseAPI: CourseAPI = resolve(CourseAPI);
+  readonly courseAPI: CoursesAPI = resolve(CoursesAPI);
 
   // ******************
   // ***** FIELDS *****
