@@ -86,26 +86,23 @@ export class CourseForm implements ICustomElementViewModel {
   }
 
   public async saveCourse() {
-    try {
-      const newFullCourse: FullCourse = {
-        name: this.course.name,
-        programs: this.course.programs,
-        schedules: this.course.schedules,
-        professor: this.course.professor,
-      };
+    const newFullCourse: FullCourse = {
+      name: this.course.name,
+      programs: this.course.programs,
+      schedules: this.course.schedules,
+      professor: this.course.professor,
+    };
 
-      const response = await this.courseAPI.createFullCourse(newFullCourse);
+    const response = await this.courseAPI.createFullCourse(newFullCourse);
+    console.log("Save course response:", response);
 
-      // Dispatch the save event with updated course data
-      this.host.dispatchEvent(
-        new CustomEvent("save", {
-          detail: this.course,
-          bubbles: true,
-        })
-      );
-    } catch (error: any) {
-      console.error("Error saving course:", error.message || error);
-    }
+    // Dispatch the save event with updated course data
+    this.host.dispatchEvent(
+      new CustomEvent("save", {
+        detail: this.course,
+        bubbles: true,
+      })
+    );
   }
 
   public cancel() {
