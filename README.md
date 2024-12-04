@@ -6,7 +6,7 @@
 - src/hook/roles-hook.ts
 - src/services/auth/auth.ts
 - src/ressources/courses/course-detail/course-detail.ts
-
+- src/ressources/courses/course-detail/course-detail.html
 
 ## Skeleton
 

@@ -22,7 +22,6 @@ export interface Course {
 
 // Course with joins
 export interface FullCourse extends Course {
-  classrooms: Classroom[];
   programs: Program[];
   schedules: Schedule[];
   professor: {
@@ -212,28 +211,14 @@ export class CourseAPI {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         try {
-          // Get all courses
+          // 1. Get all courses
           const coursesResponse = await this.getCourses();
           const courses = coursesResponse.data;
 
-          // Do joins with API
+          // 2. Build FullCourse objects for each course
           const result = await Promise.all(
             courses.map(async (course) => {
-              // Get Classrooms linked to the course
-              const classroomsResponse =
-                await this.courseClassroomAPI.getClassroomsByCourse(
-                  course.course_id!
-                );
-              const linkedClassrooms = await Promise.all(
-                classroomsResponse.data.map(
-                  async (rel) =>
-                    (
-                      await this.classroomAPI.getClassroomById(rel.classroom_id)
-                    ).data
-                )
-              );
-
-              // Get programs linked to the course
+              // 2.1. Get programs linked to the course
               const programsResponse =
                 await this.courseProgramAPI.getProgramsByCourse(
                   course.course_id!
@@ -247,38 +232,54 @@ export class CourseAPI {
                 )
               );
 
-              // Get schedules linked to the course
+              // 2.2. Get schedules linked to the course
               const schedules = (await this.schedulesAPI.getSchedules()).data;
+
+              // 2.3. Enrich each schedule with its corresponding classroom
               const linkedSchedules = await Promise.all(
                 schedules
                   .filter((schedule) => schedule.course_id === course.course_id)
                   .map(async (schedule) => {
-                    // Join schedule with classroom
-                    const classroom = await this.classroomAPI.getClassroomById(
-                      schedule.classroom_id
-                    );
-                    return { ...schedule, classroom: classroom.data };
+                    // Fetch classroom details by classroom_id
+                    const classroomResponse =
+                      await this.classroomAPI.getClassroomById(
+                        schedule.classroom_id
+                      );
+
+                    const classroom = classroomResponse.data;
+
+                    // Return the enriched schedule with classroom details
+                    return {
+                      ...schedule,
+                      classroom: {
+                        classroom_id: classroom.classroom_id,
+                        name: classroom.name,
+                        capacity: classroom.capacity,
+                      }, // Include classroom details explicitly
+                    };
                   })
               );
 
-              // Get professor (user) details using a User API or service
+              // 2.4. Get professor (user) details using the Users API
               const professorResponse = await this.usersAPI.getUserById(
                 course.user_id!
               );
               const professor = professorResponse.data;
 
+              // 2.5. Combine all details into a FullCourse object
               return {
                 ...course,
-                classrooms: linkedClassrooms,
                 programs: linkedPrograms,
                 schedules: linkedSchedules,
-                professor, // Include professor in the result
+                professor, // Include professor details
               };
             })
           );
 
+          // 3. Resolve the promise with the list of FullCourses
           resolve({ status: 200, data: result });
         } catch (error) {
+          // Handle errors during the process
           reject({ status: 500, message: "Error fetching data", error });
         }
       }, this.latency);
@@ -289,19 +290,23 @@ export class CourseAPI {
   public async createFullCourse(
     newFullCourse: FullCourse
   ): Promise<StatusResponse<FullCourse>> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let createdCourse;
-  
-        // 1 : Create or update the course
-        if (newFullCourse.course_id) {
-          // If course_id exists, update the course instead of creating a new one
-          const courseResponse = await this.updateCourse(newFullCourse.course_id, {
-            name: newFullCourse.name,
-            user_id: this.authService.getUserID(),
-          });
-          createdCourse = courseResponse.data;
-          console.log("Step 1: Course updated successfully", createdCourse);
+    try {
+      let createdCourse: Course;
+
+      // 1. Check if the course already exists
+      if (newFullCourse.course_id) {
+        // If course_id exists, retrieve the existing course
+        createdCourse = (await this.getCoursesById(newFullCourse.course_id))
+          .data;
+      } else {
+        // Check if a course with the same name already exists
+        const existingCourse = await this.getCourseByName(
+          newFullCourse.name
+        ).catch(() => null);
+
+        if (existingCourse?.data) {
+          // If the course exists, use the existing course
+          createdCourse = existingCourse.data;
         } else {
           // Otherwise, create a new course
           const courseResponse = await this.createCourse({
@@ -309,91 +314,107 @@ export class CourseAPI {
             user_id: this.authService.getUserID(),
           });
           createdCourse = courseResponse.data;
-          console.log("Step 1: Course created successfully", createdCourse);
         }
-  
-        // 2 : Join classrooms to course
-        await Promise.all(
-          newFullCourse.classrooms.map(async (classroom) => {
-            let existingClassroom = null;
-  
-            try {
-              const response = await this.classroomAPI.getClassroomById(
-                classroom.classroom_id
-              );
-              existingClassroom = response.data;
-            } catch {
-              const response = await this.classroomAPI.createClassroom(classroom);
-              existingClassroom = response.data;
-            }
-  
-            await this.courseClassroomAPI.addClassroomToCourse(
-              createdCourse.course_id!,
-              existingClassroom.classroom_id
-            );
-          })
-        );
-  
-        // 3 : Join programs to course
-        await Promise.all(
-          newFullCourse.programs.map(async (program) => {
-            let existingProgram = null;
-  
-            try {
-              const response = await this.programAPI.getProgramByName(
-                program.name
-              );
-              existingProgram = response.data;
-            } catch {
-              const response = await this.programAPI.createProgram(program);
-              existingProgram = response.data;
-            }
-  
-            await this.courseProgramAPI.addCourseProgramRelation(
-              createdCourse.course_id!,
-              existingProgram.program_id!
-            );
-          })
-        );
-  
-        // 4 : Join schedules to course
-        await Promise.all(
-          newFullCourse.schedules.map(async (schedule) => {
-            let existingSchedule = null;
-  
-            const schedulesResponse = await this.schedulesAPI.getSchedules();
-            existingSchedule = schedulesResponse.data.find(
-              (s) =>
-                s.course_id === createdCourse.course_id &&
-                s.classroom_id === schedule.classroom_id &&
-                s.day === schedule.day &&
-                s.start_time === schedule.start_time &&
-                s.end_time === schedule.end_time
-            );
-  
-            if (!existingSchedule) {
-              await this.schedulesAPI.createSchedule({
-                ...schedule,
-                course_id: createdCourse.course_id!,
-              });
-            }
-          })
-        );
-  
-        // 5 : Build and return FullCourse
-        const fullCourse = {
-          ...createdCourse,
-          classrooms: newFullCourse.classrooms,
-          programs: newFullCourse.programs,
-          schedules: newFullCourse.schedules,
-          professor: newFullCourse.professor,
-        };
-        resolve({ status: 201, data: fullCourse });
-      } catch (error) {
-        reject({ status: 500, message: "Error creating full course", error });
       }
-    });
+
+      // 2. Link programs to the course
+      const existingPrograms = await this.courseProgramAPI.getProgramsByCourse(
+        createdCourse.course_id!
+      );
+      for (const program of newFullCourse.programs) {
+        let existingProgram: Program;
+        try {
+          // Try to fetch the program by name
+          const response = await this.programAPI.getProgramByName(program.name);
+          existingProgram = response.data;
+        } catch {
+          // If the program does not exist, create it
+          const response = await this.programAPI.createProgram(program);
+          existingProgram = response.data;
+        }
+
+        if (
+          !existingPrograms.data.some(
+            (rel) => rel.program_id === existingProgram.program_id
+          )
+        ) {
+          // Add program to course only if it is not already linked
+          await this.courseProgramAPI.addCourseProgramRelation(
+            createdCourse.course_id!,
+            existingProgram.program_id!
+          );
+        }
+      }
+
+      // 3. Add schedules to the course
+      const schedulesResponse = await this.schedulesAPI.getSchedules();
+      for (const schedule of newFullCourse.schedules) {
+        const existingSchedule = schedulesResponse.data.find(
+          (s) =>
+            s.course_id === createdCourse.course_id &&
+            s.classroom_id === schedule.classroom_id &&
+            s.day === schedule.day &&
+            s.start_time === schedule.start_time &&
+            s.end_time === schedule.end_time
+        );
+
+        if (!existingSchedule) {
+          const conflict = schedulesResponse.data.some(
+            (s) =>
+              s.classroom_id === schedule.classroom_id &&
+              s.day === schedule.day &&
+              !(
+                schedule.end_time <= s.start_time ||
+                schedule.start_time >= s.end_time
+              )
+          );
+
+          if (!conflict) {
+            // Create the schedule
+            await this.schedulesAPI.createSchedule({
+              ...schedule,
+              course_id: createdCourse.course_id!,
+            });
+          } else {
+            console.log(
+              "Schedule conflict detected, skipping schedule addition"
+            );
+          }
+        }
+      }
+
+      // 4. Enrich schedules with classroom details
+      const enrichedSchedules = await Promise.all(
+        newFullCourse.schedules.map(async (schedule) => {
+          const classroomResponse = await this.classroomAPI.getClassroomById(
+            schedule.classroom_id
+          );
+
+          const classroom = classroomResponse.data;
+
+          return {
+            ...schedule,
+            classroom: {
+              classroom_id: classroom.classroom_id,
+              name: classroom.name,
+              capacity: classroom.capacity,
+            }, // Include classroom details
+          };
+        })
+      );
+
+      // 5. Return the updated FullCourse object
+      const fullCourse: FullCourse = {
+        ...createdCourse,
+        programs: newFullCourse.programs,
+        schedules: enrichedSchedules, // Use enriched schedules with classroom details
+        professor: newFullCourse.professor,
+      };
+
+      return { status: 201, data: fullCourse };
+    } catch (error) {
+      console.error("Error creating full course:", error);
+      throw { status: 500, message: "Error creating full course", error };
+    }
   }
-  
-  
 }

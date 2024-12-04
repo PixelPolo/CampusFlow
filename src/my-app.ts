@@ -10,6 +10,7 @@ import { resolve } from "aurelia";
 import { watch } from "aurelia";
 import { StudentCourses } from "./views/courses/student/student-courses";
 import { ProfessorCourses } from "./views/courses/professor/professor-courses";
+import { AddCourse } from "./views/courses/add-course/add-course";
 
 export class MyApp {
   // ********************
@@ -55,7 +56,7 @@ export class MyApp {
       title: "In Progress",
       data: {
         nav: false,
-        public: true
+        public: true,
       },
     },
     {
@@ -103,7 +104,15 @@ export class MyApp {
         requiredRoles: ["student"],
       },
     },
-
+    {
+      component: AddCourse,
+      path: "add-course",
+      title: "Add Course",
+      data: {
+        nav: true,
+        requiredRoles: ["professor"],
+      },
+    },
   ];
 
   public allowedRoutes: IRoute[] = [];

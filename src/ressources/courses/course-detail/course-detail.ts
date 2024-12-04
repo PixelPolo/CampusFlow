@@ -13,23 +13,38 @@ export class CourseDetail implements ICustomElementViewModel {
   // ******************
   // ***** FIELDS *****
   // ******************
+
   @bindable() course: FullCourse;
 
   public canEdit: boolean;
-
   public isEditing: boolean = false;
 
   // *******************
   // ***** METHODS *****
   // *******************
-  attached() {
+
+  public attached() {
     // this.canEdit = this.authService.getUserRoles().includes("professor");
     // Dev only
     this.isEditing = false;
-    this.canEdit = true; 
+    this.canEdit = true;
   }
 
-  edit() {
+  public edit() {
     this.isEditing = true;
+  }
+
+  public delete() {
+    alert("Not implemented 😅");
+  }
+
+  public handleSave(event: CustomEvent) {
+    const courseDetail = event.detail;
+    this.course = courseDetail;
+    this.isEditing = false;
+  }
+
+  public handleCancel() {
+    this.isEditing = false;
   }
 }
