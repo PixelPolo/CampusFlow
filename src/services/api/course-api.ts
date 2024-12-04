@@ -206,215 +206,179 @@ export class CourseAPI {
   readonly usersAPI: UsersAPI = resolve(UsersAPI);
   readonly authService: AuthService = resolve(AuthService);
 
-  // GET /fullCourses
+  // Fetch full courses
   public async getFullCourses(): Promise<StatusResponse<FullCourse[]>> {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          // 1. Get all courses
-          const coursesResponse = await this.getCourses();
-          const courses = coursesResponse.data;
+    try {
+      const coursesResponse = await this.getCourses();
+      const courses = coursesResponse.data;
 
-          // 2. Build FullCourse objects for each course
-          const result = await Promise.all(
-            courses.map(async (course) => {
-              // 2.1. Get programs linked to the course
-              const programsResponse =
-                await this.courseProgramAPI.getProgramsByCourse(
-                  course.course_id!
-                );
-              const linkedPrograms = await Promise.all(
-                programsResponse.data.map(
-                  async (rel) =>
-                    (
-                      await this.programAPI.getProgramById(rel.program_id)
-                    ).data
-                )
-              );
+      const fullCourses = await Promise.all(
+        courses.map(async (course) => this.enrichCourse(course))
+      );
 
-              // 2.2. Get schedules linked to the course
-              const schedules = (await this.schedulesAPI.getSchedules()).data;
-
-              // 2.3. Enrich each schedule with its corresponding classroom
-              const linkedSchedules = await Promise.all(
-                schedules
-                  .filter((schedule) => schedule.course_id === course.course_id)
-                  .map(async (schedule) => {
-                    // Fetch classroom details by classroom_id
-                    const classroomResponse =
-                      await this.classroomAPI.getClassroomById(
-                        schedule.classroom_id
-                      );
-
-                    const classroom = classroomResponse.data;
-
-                    // Return the enriched schedule with classroom details
-                    return {
-                      ...schedule,
-                      classroom: {
-                        classroom_id: classroom.classroom_id,
-                        name: classroom.name,
-                        capacity: classroom.capacity,
-                      }, // Include classroom details explicitly
-                    };
-                  })
-              );
-
-              // 2.4. Get professor (user) details using the Users API
-              const professorResponse = await this.usersAPI.getUserById(
-                course.user_id!
-              );
-              const professor = professorResponse.data;
-
-              // 2.5. Combine all details into a FullCourse object
-              return {
-                ...course,
-                programs: linkedPrograms,
-                schedules: linkedSchedules,
-                professor, // Include professor details
-              };
-            })
-          );
-
-          // 3. Resolve the promise with the list of FullCourses
-          resolve({ status: 200, data: result });
-        } catch (error) {
-          // Handle errors during the process
-          reject({ status: 500, message: "Error fetching data", error });
-        }
-      }, this.latency);
-    });
+      return { status: 200, data: fullCourses };
+    } catch (error) {
+      console.error("Error fetching full courses:", error);
+      throw { status: 500, message: "Error fetching full courses", error };
+    }
   }
 
-  // POST /fullCourses
+  // Create or update a full course
   public async createFullCourse(
     newFullCourse: FullCourse
   ): Promise<StatusResponse<FullCourse>> {
     try {
-      let createdCourse: Course;
+      const course = await this.getOrCreateCourse(newFullCourse);
 
-      // 1. Check if the course already exists
-      if (newFullCourse.course_id) {
-        // If course_id exists, retrieve the existing course
-        createdCourse = (await this.getCoursesById(newFullCourse.course_id))
-          .data;
-      } else {
-        // Check if a course with the same name already exists
-        const existingCourse = await this.getCourseByName(
-          newFullCourse.name
-        ).catch(() => null);
-
-        if (existingCourse?.data) {
-          // If the course exists, use the existing course
-          createdCourse = existingCourse.data;
-        } else {
-          // Otherwise, create a new course
-          const courseResponse = await this.createCourse({
-            name: newFullCourse.name,
-            user_id: this.authService.getUserID(),
-          });
-          createdCourse = courseResponse.data;
-        }
-      }
-
-      // 2. Link programs to the course
-      const existingPrograms = await this.courseProgramAPI.getProgramsByCourse(
-        createdCourse.course_id!
+      await this.linkProgramsToCourse(
+        newFullCourse.programs,
+        course.course_id!
       );
-      for (const program of newFullCourse.programs) {
-        let existingProgram: Program;
-        try {
-          // Try to fetch the program by name
-          const response = await this.programAPI.getProgramByName(program.name);
-          existingProgram = response.data;
-        } catch {
-          // If the program does not exist, create it
-          const response = await this.programAPI.createProgram(program);
-          existingProgram = response.data;
-        }
+      await this.linkSchedulesToCourse(
+        newFullCourse.schedules,
+        course.course_id!
+      );
 
-        if (
-          !existingPrograms.data.some(
-            (rel) => rel.program_id === existingProgram.program_id
-          )
-        ) {
-          // Add program to course only if it is not already linked
-          await this.courseProgramAPI.addCourseProgramRelation(
-            createdCourse.course_id!,
-            existingProgram.program_id!
-          );
-        }
+      const enrichedCourse = await this.enrichCourse(course);
+
+      return { status: 201, data: enrichedCourse };
+    } catch (error) {
+      console.error("Error creating or updating full course:", error);
+      throw {
+        status: 500,
+        message: "Error creating or updating full course",
+        error,
+      };
+    }
+  }
+
+  // Helper to retrieve or create a course
+  private async getOrCreateCourse(fullCourse: FullCourse): Promise<Course> {
+    if (fullCourse.course_id) {
+      return this.getCoursesById(fullCourse.course_id).then((res) => res.data);
+    }
+
+    const existingCourse = await this.getCourseByName(fullCourse.name).catch(
+      () => null
+    );
+    if (existingCourse?.data) return existingCourse.data;
+
+    const createdCourse = await this.createCourse({
+      name: fullCourse.name,
+      user_id: this.authService.getUserID(),
+    });
+    return createdCourse.data;
+  }
+
+  // Enrich a single course with programs, schedules, and professor
+  private async enrichCourse(course: Course): Promise<FullCourse> {
+    const programs = await this.getProgramsForCourse(course.course_id!);
+    const schedules = await this.getEnrichedSchedulesForCourse(
+      course.course_id!
+    );
+    const professor = await this.usersAPI.getUserById(course.user_id!);
+
+    return {
+      ...course,
+      programs,
+      schedules,
+      professor: professor.data,
+    };
+  }
+
+  // Fetch and enrich schedules for a course
+  private async getEnrichedSchedulesForCourse(
+    courseId: number
+  ): Promise<Schedule[]> {
+    const schedules = (await this.schedulesAPI.getSchedules()).data.filter(
+      (schedule) => schedule.course_id === courseId
+    );
+
+    return Promise.all(
+      schedules.map(async (schedule) => {
+        const classroom = await this.classroomAPI.getClassroomById(
+          schedule.classroom_id
+        );
+        return { ...schedule, classroom: classroom.data };
+      })
+    );
+  }
+
+  // Fetch programs linked to a course
+  private async getProgramsForCourse(courseId: number): Promise<Program[]> {
+    const programLinks = await this.courseProgramAPI.getProgramsByCourse(
+      courseId
+    );
+    return Promise.all(
+      programLinks.data.map(async (relation) => {
+        const program = await this.programAPI.getProgramById(
+          relation.program_id
+        );
+        return program.data;
+      })
+    );
+  }
+
+  // Link or update programs for a course
+  private async linkProgramsToCourse(programs: Program[], courseId: number) {
+    const existingLinks = await this.courseProgramAPI.getProgramsByCourse(
+      courseId
+    );
+    const existingProgramIds = existingLinks.data.map(
+      (link) => link.program_id
+    );
+
+    for (const program of programs) {
+      const programData =
+        (await this.programAPI.getProgramByName(program.name).catch(() => null))
+          ?.data || (await this.programAPI.createProgram(program)).data;
+
+      if (!existingProgramIds.includes(programData.program_id!)) {
+        await this.courseProgramAPI.addCourseProgramRelation(
+          courseId,
+          programData.program_id!
+        );
       }
+    }
+  }
 
-      // 3. Add schedules to the course
-      const schedulesResponse = await this.schedulesAPI.getSchedules();
-      for (const schedule of newFullCourse.schedules) {
-        const existingSchedule = schedulesResponse.data.find(
+  // Link or update schedules for a course
+  private async linkSchedulesToCourse(schedules: Schedule[], courseId: number) {
+    const existingSchedules = (
+      await this.schedulesAPI.getSchedules()
+    ).data.filter((schedule) => schedule.course_id === courseId);
+
+    for (const schedule of schedules) {
+      const exists = existingSchedules.some(
+        (s) =>
+          s.classroom_id === schedule.classroom_id &&
+          s.day === schedule.day &&
+          s.start_time === schedule.start_time &&
+          s.end_time === schedule.end_time
+      );
+
+      if (!exists) {
+        const hasConflict = existingSchedules.some(
           (s) =>
-            s.course_id === createdCourse.course_id &&
             s.classroom_id === schedule.classroom_id &&
             s.day === schedule.day &&
-            s.start_time === schedule.start_time &&
-            s.end_time === schedule.end_time
+            !(
+              schedule.end_time <= s.start_time ||
+              schedule.start_time >= s.end_time
+            )
         );
 
-        if (!existingSchedule) {
-          const conflict = schedulesResponse.data.some(
-            (s) =>
-              s.classroom_id === schedule.classroom_id &&
-              s.day === schedule.day &&
-              !(
-                schedule.end_time <= s.start_time ||
-                schedule.start_time >= s.end_time
-              )
+        if (!hasConflict) {
+          await this.schedulesAPI.createSchedule({
+            ...schedule,
+            course_id: courseId,
+          });
+        } else {
+          console.warn(
+            `Schedule conflict detected for classroom: ${schedule.classroom_id}`
           );
-
-          if (!conflict) {
-            // Create the schedule
-            await this.schedulesAPI.createSchedule({
-              ...schedule,
-              course_id: createdCourse.course_id!,
-            });
-          } else {
-            console.log(
-              "Schedule conflict detected, skipping schedule addition"
-            );
-          }
         }
       }
-
-      // 4. Enrich schedules with classroom details
-      const enrichedSchedules = await Promise.all(
-        newFullCourse.schedules.map(async (schedule) => {
-          const classroomResponse = await this.classroomAPI.getClassroomById(
-            schedule.classroom_id
-          );
-
-          const classroom = classroomResponse.data;
-
-          return {
-            ...schedule,
-            classroom: {
-              classroom_id: classroom.classroom_id,
-              name: classroom.name,
-              capacity: classroom.capacity,
-            }, // Include classroom details
-          };
-        })
-      );
-
-      // 5. Return the updated FullCourse object
-      const fullCourse: FullCourse = {
-        ...createdCourse,
-        programs: newFullCourse.programs,
-        schedules: enrichedSchedules, // Use enriched schedules with classroom details
-        professor: newFullCourse.professor,
-      };
-
-      return { status: 201, data: fullCourse };
-    } catch (error) {
-      console.error("Error creating full course:", error);
-      throw { status: 500, message: "Error creating full course", error };
     }
   }
 }

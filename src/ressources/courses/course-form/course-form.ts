@@ -84,41 +84,22 @@ export class CourseForm implements ICustomElementViewModel {
     this.course.schedules = this.course.schedules.filter((s) => s !== schedule);
     console.log(`Removed schedule for day: ${schedule.day}`);
   }
+
   public async saveCourse() {
     try {
-      // Enrich each schedule with the correct classroom_id
-      const enrichedSchedules = this.course.schedules.map((schedule) => {
-        // Find the classroom in the classroomsList based on the selected classroom
-        const classroom = this.classroomsList.find(
-          (cls) => cls.classroom_id === schedule.classroom_id
-        );
-
-        if (!classroom) {
-          throw new Error(`Classroom not found for schedule: ${schedule.day}`);
-        }
-
-        return {
-          ...schedule,
-          classroom_id: classroom.classroom_id, // Set the correct classroom_id
-        };
-      });
-
-      // Create the new full course object
       const newFullCourse: FullCourse = {
         name: this.course.name,
         programs: this.course.programs,
-        schedules: enrichedSchedules, // Use schedules with the correct classroom_id
+        schedules: this.course.schedules,
         professor: this.course.professor,
       };
 
-      // Send the updated course to the API
       const response = await this.courseAPI.createFullCourse(newFullCourse);
-      console.log("Course saved successfully:", response.data);
 
       // Dispatch the save event with updated course data
       this.host.dispatchEvent(
         new CustomEvent("save", {
-          detail: this.course, // Pass updated course data as event detail
+          detail: this.course,
           bubbles: true,
         })
       );
@@ -128,18 +109,11 @@ export class CourseForm implements ICustomElementViewModel {
   }
 
   public cancel() {
-    console.log("Cancel action triggered");
-
     // Dispatch the cancel event without additional data
     this.host.dispatchEvent(
       new CustomEvent("cancel", {
         bubbles: true, // Allow event to bubble up
       })
     );
-  }
-
-  // Utility to emit an event
-  private emit(event: Event) {
-    document.dispatchEvent(event);
   }
 }
