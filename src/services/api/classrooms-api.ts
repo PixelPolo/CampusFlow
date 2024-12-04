@@ -41,7 +41,7 @@ export class ClassroomAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****

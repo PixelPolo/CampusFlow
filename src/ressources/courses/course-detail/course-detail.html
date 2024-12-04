@@ -1,9 +1,9 @@
 <template>
   <require
-    from="/src/ressources/courses/course-form/course-form.html"
+    from="/src/ressources/courses/course-form/course-form"
   ></require>
 
-  <mdc-card>
+  <mdc-card if.bind="!isEditing">
     <div>
       <!-- Programs -->
       <div>
@@ -45,7 +45,8 @@
     </div>
 
     <!-- Actions : Edit or delete -->
-    <div if.bind="canEdit">
+    <!-- TODO : ACCORDING THE ROLES -->
+    <div class="buttons" if.bind="canEdit">
       <mdc-card-actions>
         <mdc-card-action-buttons>
           <button mdc-button raised click.trigger="edit()">Edit</button>

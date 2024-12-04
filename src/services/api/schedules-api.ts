@@ -83,7 +83,7 @@ export class SchedulesAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****

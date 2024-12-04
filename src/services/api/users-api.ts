@@ -58,7 +58,7 @@ export class UsersAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****

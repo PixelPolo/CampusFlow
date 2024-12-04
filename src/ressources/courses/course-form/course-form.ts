@@ -7,7 +7,14 @@ export class CourseForm implements ICustomElementViewModel {
   // ******************
   @bindable() course: FullCourse;
 
+  public isEditing: boolean = false;
+
+
   attached() {
     console.log(this.course);
+  }
+
+  edit() {
+    this.isEditing = true;
   }
 }

@@ -31,7 +31,7 @@ let coursePrograms: CourseProgram[] = [
 
 @singleton()
 export class CourseProgramAPI {
-  private latency = 1000;
+  private latency = 100;
 
   // POST /course-program
   public addCourseProgramRelation(

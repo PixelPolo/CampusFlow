@@ -38,7 +38,7 @@ let courseClassrooms: CourseClassroom[] = [
 
 @singleton()
 export class CourseClassroomAPI {
-  private latency = 1000;
+  private latency = 100;
 
   // POST /course-classrooms
   public addClassroomToCourse(

@@ -1,5 +1,15 @@
 # README
 
+## Dev only to remove
+
+- src/hook/auth-hook.ts
+- src/hook/roles-hook.ts
+- src/services/auth/auth.ts
+- src/ressources/courses/course-detail/course-detail.ts
+
+
+## Skeleton
+
 This repository contains a Aurelia2 Material application.
 
 Skeleton available on <https://github.com/aurelia-ui-toolkits/aurelia-mdc-web/tree/v2>
