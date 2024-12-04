@@ -7,6 +7,7 @@ import { Classroom, ClassroomAPI } from "./classrooms-api";
 import { CourseProgramAPI } from "./course-program-api";
 import { Program, ProgramsAPI } from "./programs-api";
 import { Schedule, SchedulesAPI } from "./schedules-api";
+import { AuthService } from "../auth/auth";
 
 // ******************
 // ***** COURSE *****
@@ -204,6 +205,7 @@ export class CourseAPI {
   readonly programAPI: ProgramsAPI = resolve(ProgramsAPI);
   readonly schedulesAPI: SchedulesAPI = resolve(SchedulesAPI);
   readonly usersAPI: UsersAPI = resolve(UsersAPI);
+  readonly authService: AuthService = resolve(AuthService);
 
   // GET /fullCourses
   public async getFullCourses(): Promise<StatusResponse<FullCourse[]>> {
@@ -282,4 +284,116 @@ export class CourseAPI {
       }, this.latency);
     });
   }
+
+  // POST /fullCourses
+  public async createFullCourse(
+    newFullCourse: FullCourse
+  ): Promise<StatusResponse<FullCourse>> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let createdCourse;
+  
+        // 1 : Create or update the course
+        if (newFullCourse.course_id) {
+          // If course_id exists, update the course instead of creating a new one
+          const courseResponse = await this.updateCourse(newFullCourse.course_id, {
+            name: newFullCourse.name,
+            user_id: this.authService.getUserID(),
+          });
+          createdCourse = courseResponse.data;
+          console.log("Step 1: Course updated successfully", createdCourse);
+        } else {
+          // Otherwise, create a new course
+          const courseResponse = await this.createCourse({
+            name: newFullCourse.name,
+            user_id: this.authService.getUserID(),
+          });
+          createdCourse = courseResponse.data;
+          console.log("Step 1: Course created successfully", createdCourse);
+        }
+  
+        // 2 : Join classrooms to course
+        await Promise.all(
+          newFullCourse.classrooms.map(async (classroom) => {
+            let existingClassroom = null;
+  
+            try {
+              const response = await this.classroomAPI.getClassroomById(
+                classroom.classroom_id
+              );
+              existingClassroom = response.data;
+            } catch {
+              const response = await this.classroomAPI.createClassroom(classroom);
+              existingClassroom = response.data;
+            }
+  
+            await this.courseClassroomAPI.addClassroomToCourse(
+              createdCourse.course_id!,
+              existingClassroom.classroom_id
+            );
+          })
+        );
+  
+        // 3 : Join programs to course
+        await Promise.all(
+          newFullCourse.programs.map(async (program) => {
+            let existingProgram = null;
+  
+            try {
+              const response = await this.programAPI.getProgramByName(
+                program.name
+              );
+              existingProgram = response.data;
+            } catch {
+              const response = await this.programAPI.createProgram(program);
+              existingProgram = response.data;
+            }
+  
+            await this.courseProgramAPI.addCourseProgramRelation(
+              createdCourse.course_id!,
+              existingProgram.program_id!
+            );
+          })
+        );
+  
+        // 4 : Join schedules to course
+        await Promise.all(
+          newFullCourse.schedules.map(async (schedule) => {
+            let existingSchedule = null;
+  
+            const schedulesResponse = await this.schedulesAPI.getSchedules();
+            existingSchedule = schedulesResponse.data.find(
+              (s) =>
+                s.course_id === createdCourse.course_id &&
+                s.classroom_id === schedule.classroom_id &&
+                s.day === schedule.day &&
+                s.start_time === schedule.start_time &&
+                s.end_time === schedule.end_time
+            );
+  
+            if (!existingSchedule) {
+              await this.schedulesAPI.createSchedule({
+                ...schedule,
+                course_id: createdCourse.course_id!,
+              });
+            }
+          })
+        );
+  
+        // 5 : Build and return FullCourse
+        const fullCourse = {
+          ...createdCourse,
+          classrooms: newFullCourse.classrooms,
+          programs: newFullCourse.programs,
+          schedules: newFullCourse.schedules,
+          professor: newFullCourse.professor,
+        };
+        resolve({ status: 201, data: fullCourse });
+      } catch (error) {
+        reject({ status: 500, message: "Error creating full course", error });
+      }
+    });
+  }
+  
+  
 }
