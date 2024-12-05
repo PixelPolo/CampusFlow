@@ -13,6 +13,7 @@ export interface CourseProgram {
 // Mock Data for relation between courses and programs
 let courseProgramRels: CourseProgram[] = [
   { course_id: 1, program_id: 1 },
+  { course_id: 1, program_id: 2 },
   { course_id: 2, program_id: 2 },
   { course_id: 3, program_id: 3 },
   { course_id: 4, program_id: 4 },
@@ -30,10 +31,10 @@ let courseProgramRels: CourseProgram[] = [
 
 @singleton()
 export class CourseProgramAPI {
-  private latency = 1000;
+  private latency = 100;
 
-  // POST /course-program
-  public addProgramToCourse(
+  // POST /course-program { "courseId": number, "programId": number }
+  public addRelation(
     courseId: number,
     programId: number
   ): Promise<StatusResponse<CourseProgram>> {
@@ -61,35 +62,35 @@ export class CourseProgramAPI {
   }
 
   // GET /course-program/:course_id
-  public getProgramsByCourse(
+  public getRelsByCourseID(
     courseId: number
   ): Promise<StatusResponse<CourseProgram[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseProgramsForCourse = courseProgramRels.filter(
+        const relations = courseProgramRels.filter(
           (relation) => relation.course_id === courseId
         );
-        resolve({ status: 200, data: courseProgramsForCourse });
+        resolve({ status: 200, data: relations });
       }, this.latency);
     });
   }
 
   // GET /course-program/:program_id
-  public getCoursesByProgram(
+  public getRelsByProgramID(
     programId: number
   ): Promise<StatusResponse<CourseProgram[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseProgramsForProgram = courseProgramRels.filter(
+        const relations = courseProgramRels.filter(
           (relation) => relation.program_id === programId
         );
-        resolve({ status: 200, data: courseProgramsForProgram });
+        resolve({ status: 200, data: relations });
       }, this.latency);
     });
   }
 
-  // DELETE /course-program/:course_id/:program_id
-  public removeCourseProgramRelation(
+  // DELETE /course-program { "courseId": number, "programId": number }
+  public removeRelation(
     courseId: number,
     programId: number
   ): Promise<StatusResponse<null>> {

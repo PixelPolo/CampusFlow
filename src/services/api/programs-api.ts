@@ -8,7 +8,7 @@ import { StatusResponse } from "./rest-full.model";
 // Interface
 export interface Program {
   program_id?: number;
-  name: string;
+  name: string; // Unique
   description: string;
 }
 
@@ -61,7 +61,7 @@ export class ProgramsAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****

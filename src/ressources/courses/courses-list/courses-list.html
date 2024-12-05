@@ -1,0 +1,26 @@
+<template>
+  <require from="/src/ressources/loader/loader"></require>
+  <require from="/src/ressources/courses/course-detail/course-detail"></require>
+  <div class="loader-container" if.bind="courses.length === 0">
+    <loader></loader>
+  </div>
+  <div class="courses-container">
+    <mdc-list>
+      <!-- Course list -->
+      <div
+        repeat.for="course of courses"
+        class.bind="selectedCourse === course ? 'selected' : ''"
+      >
+        <!-- Course list item -->
+        <mdc-list-item click.trigger="selectCourse(course)">
+          <span>${course.name}</span>
+          <mdc-icon mdc-list-item-trailing>info</mdc-icon>
+        </mdc-list-item>
+        <!-- Course Detail if selected -->
+        <div if.bind="selectedCourse === course">
+          <course-detail course.bind="selectedCourse"></course-detail>
+        </div>
+      </div>
+    </mdc-list>
+  </div>
+</template>

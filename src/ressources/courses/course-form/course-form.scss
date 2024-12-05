@@ -1,0 +1,27 @@
+mdc-card {
+  padding: 10px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.mdc-button,
+.mdc-text-field,
+.mdc-select {
+  margin-bottom: 10px; 
+}
+
+.mdc-button {
+  width: 250px
+}
+
+mdc-card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; 
+}

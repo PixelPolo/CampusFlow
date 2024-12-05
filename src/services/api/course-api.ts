@@ -1,11 +1,5 @@
 import { singleton } from "aurelia";
 import { StatusResponse } from "./rest-full.model";
-import { CourseClassroomAPI } from "./course-classroom-api";
-import { resolve } from "aurelia";
-import { Classroom, ClassroomAPI } from "./classrooms-api";
-import { CourseProgramAPI } from "./course-program-api";
-import { Program, ProgramsAPI } from "./programs-api";
-import { Schedule, SchedulesAPI } from "./schedules-api";
 
 // ******************
 // ***** COURSE *****
@@ -14,15 +8,8 @@ import { Schedule, SchedulesAPI } from "./schedules-api";
 // Interface
 export interface Course {
   course_id?: number;
-  name: string;
-  user_id?: number; // Professor
-}
-
-// Course with joins
-export interface FullCourse extends Course {
-  classrooms: Classroom;
-  programs: Program;
-  schedules: Schedule;
+  name: string; // Unique
+  user_id?: number;
 }
 
 // ID Generation
@@ -36,52 +23,52 @@ let courses: Course[] = [
   {
     course_id: 1,
     name: "Introduction to Computer Science",
-    user_id: 101,
+    user_id: 1,
   },
   {
     course_id: 2,
     name: "Advanced Data Structures",
-    user_id: 102,
+    user_id: 2,
   },
   {
     course_id: 3,
     name: "Web Development",
-    user_id: 103,
+    user_id: 3,
   },
   {
     course_id: 4,
     name: "Machine Learning",
-    user_id: 104,
+    user_id: 1,
   },
   {
     course_id: 5,
     name: "Database Systems",
-    user_id: 105,
+    user_id: 2,
   },
   {
     course_id: 6,
     name: "Cloud Computing",
-    user_id: 106,
+    user_id: 3,
   },
   {
     course_id: 7,
     name: "Operating Systems",
-    user_id: 107,
+    user_id: 1,
   },
   {
     course_id: 8,
     name: "Artificial Intelligence",
-    user_id: 108,
+    user_id: 2,
   },
   {
     course_id: 9,
     name: "Software Engineering",
-    user_id: 109,
+    user_id: 3,
   },
   {
     course_id: 10,
     name: "Computer Networks",
-    user_id: 110,
+    user_id: 1,
   },
 ];
 
@@ -90,11 +77,11 @@ let courses: Course[] = [
 // ******************************************
 
 @singleton()
-export class CourseAPI {
+export class CoursesAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****
@@ -183,79 +170,6 @@ export class CourseAPI {
           resolve({ status: 204, message: "Course deleted successfully" });
         } else {
           reject({ status: 404, message: "Course not found" });
-        }
-      }, this.latency);
-    });
-  }
-
-  // ***************************************
-  // ***** EXTRA ROUTES WITH SQL JOINS *****
-  // ***************************************
-
-  readonly courseClassroomAPI: CourseClassroomAPI = resolve(CourseClassroomAPI);
-  readonly classroomAPI: ClassroomAPI = resolve(ClassroomAPI);
-  readonly courseProgramAPI: CourseProgramAPI = resolve(CourseProgramAPI);
-  readonly programAPI: ProgramsAPI = resolve(ProgramsAPI);
-  readonly schedulesAPI: SchedulesAPI = resolve(SchedulesAPI);
-
-  // GET /fullCourses
-  public async getFullCourses(): Promise<StatusResponse<any[]>> {
-    return new Promise((resolve, reject) => {
-      setTimeout(async () => {
-        try {
-          // Get all courses
-          const coursesResponse = await this.getCourses();
-          const courses = coursesResponse.data;
-
-          // Do joins with API
-          const result = await Promise.all(
-            courses.map(async (course) => {
-              // Get Classrooms linked to the course
-              const classroomsResponse =
-                await this.courseClassroomAPI.getClassroomsByCourse(
-                  course.course_id!
-                );
-              const linkedClassrooms = await Promise.all(
-                classroomsResponse.data.map(
-                  async (rel) =>
-                    (
-                      await this.classroomAPI.getClassroomById(rel.classroom_id)
-                    ).data
-                )
-              );
-
-              // Get programs linked to the course
-              const programsResponse =
-                await this.courseProgramAPI.getProgramsByCourse(
-                  course.course_id!
-                );
-              const linkedPrograms = await Promise.all(
-                programsResponse.data.map(
-                  async (rel) =>
-                    (
-                      await this.programAPI.getProgramById(rel.program_id)
-                    ).data
-                )
-              );
-
-              // Get schedules linked to the course
-              const schedules = (await this.schedulesAPI.getSchedules()).data;
-              const linkedSchedules = schedules.filter(
-                (schedule) => schedule.course_id === course.course_id
-              );
-
-              return {
-                ...course,
-                classrooms: linkedClassrooms,
-                programs: linkedPrograms,
-                schedules: linkedSchedules,
-              };
-            })
-          );
-
-          resolve({ status: 200, data: result });
-        } catch (error) {
-          reject({ status: 500, message: "Error fetching data", error });
         }
       }, this.latency);
     });

@@ -6,8 +6,8 @@ export class Login implements IRouteableComponent {
   // ********************
   // ***** SERVICES *****
   // ********************
-  readonly authService: AuthService = resolve(AuthService);
-  readonly router: IRouter = resolve(IRouter);
+  readonly authService = resolve(AuthService);
+  readonly router = resolve(IRouter);
 
   // ******************
   // ***** FIELDS *****

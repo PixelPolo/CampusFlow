@@ -24,7 +24,7 @@ export class RolesHook {
     instruction: RoutingInstruction,
     navigation: Navigation
   ) {
-    // UNCOMMENT FOR PROD
+    // DEV ONLY
     return true
 
     const requiredRoles = instruction.route.match.data.requiredRoles;

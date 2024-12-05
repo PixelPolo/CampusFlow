@@ -1,5 +1,21 @@
 # README
 
+This is a prototype for a University management tool frontend.
+
+The backend is simulated inside fake APIs in `src/test/services/api`.
+
+## Dev vs Prod
+
+When prod, uncomments dev stuff inside :
+
+- src/hook/auth-hook.ts
+- src/hook/roles-hook.ts
+- src/services/auth/auth.ts
+- src/ressources/courses/course-detail/course-detail.ts
+- src/ressources/courses/course-detail/course-detail.html
+
+## Skeleton
+
 This repository contains a Aurelia2 Material application.
 
 Skeleton available on <https://github.com/aurelia-ui-toolkits/aurelia-mdc-web/tree/v2>

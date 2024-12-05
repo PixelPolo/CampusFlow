@@ -12,7 +12,7 @@ export interface User {
   roles: string[];
   firstName: string;
   lastName: string;
-  email: string;
+  email: string; // Unique
 }
 
 // ID Generation
@@ -58,7 +58,7 @@ export class UsersAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****

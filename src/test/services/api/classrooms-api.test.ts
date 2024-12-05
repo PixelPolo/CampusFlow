@@ -29,7 +29,7 @@ describe("ClassroomAPI", () => {
   // getClassroom
   it("should fetch all classrooms", async () => {
     const response: StatusResponse<Classroom[]> =
-      await classroomAPI.getClassroom();
+      await classroomAPI.getClassrooms();
 
     expect(response.status).toBe(200);
     expect(response.data.length).toBeGreaterThan(0);

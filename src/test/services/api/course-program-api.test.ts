@@ -17,7 +17,7 @@ describe("CourseProgramAPI", () => {
     const programId = 6;
 
     const response: StatusResponse<CourseProgram> =
-      await courseProgramAPI.addProgramToCourse(courseId, programId);
+      await courseProgramAPI.addRelation(courseId, programId);
 
     expect(response.status).toBe(201);
     expect(response.data).toMatchObject({
@@ -32,7 +32,7 @@ describe("CourseProgramAPI", () => {
     const programId = 1;
 
     await expect(
-      courseProgramAPI.addProgramToCourse(courseId, programId)
+      courseProgramAPI.addRelation(courseId, programId)
     ).rejects.toEqual({
       status: 409,
       message: "This course is already assigned to this program",
@@ -44,7 +44,7 @@ describe("CourseProgramAPI", () => {
     const courseId = 1;
 
     const response: StatusResponse<CourseProgram[]> =
-      await courseProgramAPI.getProgramsByCourse(courseId);
+      await courseProgramAPI.getRelsByCourseID(courseId);
 
     expect(response.status).toBe(200);
     expect(response.data.length).toBeGreaterThan(0);
@@ -58,7 +58,7 @@ describe("CourseProgramAPI", () => {
     const programId = 5;
 
     const response: StatusResponse<CourseProgram[]> =
-      await courseProgramAPI.getCoursesByProgram(programId);
+      await courseProgramAPI.getRelsByProgramID(programId);
 
     expect(response.status).toBe(200);
     expect(response.data.length).toBeGreaterThan(0);
@@ -75,7 +75,7 @@ describe("CourseProgramAPI", () => {
     const programId = 1;
 
     const response: StatusResponse<null> =
-      await courseProgramAPI.removeCourseProgramRelation(courseId, programId);
+      await courseProgramAPI.removeRelation(courseId, programId);
 
     expect(response.status).toBe(204);
     expect(response.message).toBe(
@@ -89,7 +89,7 @@ describe("CourseProgramAPI", () => {
     const programId = 9999;
 
     await expect(
-      courseProgramAPI.removeCourseProgramRelation(courseId, programId)
+      courseProgramAPI.removeRelation(courseId, programId)
     ).rejects.toEqual({
       status: 404,
       message: "Course-Program relation not found",

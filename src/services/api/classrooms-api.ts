@@ -8,7 +8,7 @@ import { StatusResponse } from "./rest-full.model";
 // Interface
 export interface Classroom {
   classroom_id: number;
-  name: string;
+  name: string; // Unique
   capacity: number;
 }
 
@@ -41,7 +41,7 @@ export class ClassroomAPI {
   // ******************
   // ***** FIELDS *****
   // ******************
-  private latency = 1000;
+  private latency = 100;
 
   // *******************
   // ***** METHODS *****
@@ -68,7 +68,7 @@ export class ClassroomAPI {
   }
 
   // GET /classrooms
-  public getClassroom(): Promise<StatusResponse<Classroom[]>> {
+  public getClassrooms(): Promise<StatusResponse<Classroom[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ status: 200, data: classrooms });

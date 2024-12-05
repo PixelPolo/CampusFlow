@@ -1,0 +1,31 @@
+.loader-container {
+  margin-top: 100px;
+  text-align: center;
+}
+
+.courses-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+
+
+  mdc-list {
+    background-color: #284b63;
+    padding: 0;
+
+    mdc-list-item {
+      margin: 10px 0;
+      padding: 6px 25px;
+      border-radius: 15px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      transition: background-color 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background-color: #e3f2fd;
+        transform: translateY(-3px);
+      }
+    }
+  }
+}

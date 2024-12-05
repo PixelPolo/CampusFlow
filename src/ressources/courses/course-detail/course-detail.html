@@ -1,0 +1,66 @@
+<template>
+  <require from="/src/ressources/courses/course-form/course-form"></require>
+
+  <mdc-card if.bind="!isEditing">
+    <div>
+      <!-- Programs -->
+      <div>
+        <div mdc-headline6>Programs concerned</div>
+        <ul>
+          <li repeat.for="program of relatedPrograms">
+            <div mdc-body1>
+              <strong>${program.name}:</strong><br />${program.description}
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Schedules -->
+      <div>
+        <div mdc-headline6>Schedules</div>
+        <ul>
+          <li repeat.for="schedule of relatedSchedules">
+            <div mdc-body1>
+              <strong>${schedule.day}</strong>
+            </div>
+            <div mdc-body2>${schedule.start_time} - ${schedule.end_time}</div>
+            <div mdc-body2>
+              Classroom: ${schedule.classroom.name} - Capacity:
+              ${schedule.classroom.capacity}
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Professor -->
+      <div>
+        <div mdc-headline6>Professor</div>
+        <div mdc-body1>
+          ${relatedProfessor.firstName} ${relatedProfessor.lastName}
+        </div>
+        <div mdc-body2>Email: ${relatedProfessor.email}</div>
+      </div>
+    </div>
+
+    <!-- Actions : Edit or delete -->
+    <!-- TODO : ACCORDING THE ROLES -->
+    <div if.bind="canEdit">
+      <mdc-card-actions>
+        <mdc-card-action-buttons>
+          <mdc-button raised click.trigger="edit()">Edit</mdc-button>
+          <mdc-button raised click.trigger="delete()">Delete</mdc-button>
+        </mdc-card-action-buttons>
+      </mdc-card-actions>
+    </div>
+  </mdc-card>
+
+  <div if.bind="isEditing">
+    <course-form
+      course.bind="course"
+      related-programs.bind="relatedPrograms"
+      related-schedules.bind="relatedSchedules"
+      save.trigger="handleSave($event)"
+      cancel.trigger="handleCancel()"
+    ></course-form>
+  </div>
+</template>
