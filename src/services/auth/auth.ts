@@ -6,7 +6,7 @@ export class AuthService {
   // ********************
   // ***** SERVICES *****
   // ********************
-  readonly usersAPI: UsersAPI = resolve(UsersAPI);
+  readonly usersAPI = resolve(UsersAPI);
 
   // ******************
   // ***** FIELDS *****

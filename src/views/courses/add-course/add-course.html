@@ -2,6 +2,8 @@
   <require from="/src/ressources/courses/course-form/course-form"></require>
   <course-form
     course.bind="course"
+    related-programs.bind="[]"
+    related-schedules.bind="[]"
     save.trigger="handleSave($event)"
     cancel.trigger="handleCancel()"
   ></course-form>

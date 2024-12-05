@@ -12,7 +12,7 @@ export interface User {
   roles: string[];
   firstName: string;
   lastName: string;
-  email: string;
+  email: string; // Unique
 }
 
 // ID Generation

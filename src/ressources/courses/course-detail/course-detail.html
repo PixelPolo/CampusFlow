@@ -7,7 +7,7 @@
       <div>
         <div mdc-headline6>Programs concerned</div>
         <ul>
-          <li repeat.for="program of course.programs">
+          <li repeat.for="program of relatedPrograms">
             <div mdc-body1>
               <strong>${program.name}:</strong><br />${program.description}
             </div>
@@ -19,7 +19,7 @@
       <div>
         <div mdc-headline6>Schedules</div>
         <ul>
-          <li repeat.for="schedule of course.schedules">
+          <li repeat.for="schedule of relatedSchedules">
             <div mdc-body1>
               <strong>${schedule.day}</strong>
             </div>
@@ -36,9 +36,9 @@
       <div>
         <div mdc-headline6>Professor</div>
         <div mdc-body1>
-          ${course.professor.firstName} ${course.professor.lastName}
+          ${relatedProfessor.firstName} ${relatedProfessor.lastName}
         </div>
-        <div mdc-body2>Email: ${course.professor.email}</div>
+        <div mdc-body2>Email: ${relatedProfessor.email}</div>
       </div>
     </div>
 
@@ -57,6 +57,8 @@
   <div if.bind="isEditing">
     <course-form
       course.bind="course"
+      related-programs.bind="relatedPrograms"
+      related-schedules.bind="relatedSchedules"
       save.trigger="handleSave($event)"
       cancel.trigger="handleCancel()"
     ></course-form>

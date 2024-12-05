@@ -8,7 +8,7 @@ import { StatusResponse } from "./rest-full.model";
 // Interface
 export interface Classroom {
   classroom_id: number;
-  name: string;
+  name: string; // Unique
   capacity: number;
 }
 
@@ -67,8 +67,8 @@ export class ClassroomAPI {
     });
   }
 
-  // GET /classroom
-  public getClassroom(): Promise<StatusResponse<Classroom[]>> {
+  // GET /classrooms
+  public getClassrooms(): Promise<StatusResponse<Classroom[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ status: 200, data: classrooms });
@@ -76,7 +76,7 @@ export class ClassroomAPI {
     });
   }
 
-  // GET /classroom/:id
+  // GET /classrooms/:id
   public getClassroomById(id: number): Promise<StatusResponse<Classroom>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -92,7 +92,7 @@ export class ClassroomAPI {
     });
   }
 
-  // GET /classroom?name=:name
+  // GET /classrooms?name=:name
   public getClassroomByName(name: string): Promise<StatusResponse<Classroom>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -108,7 +108,7 @@ export class ClassroomAPI {
     });
   }
 
-  // PATCH /classroom/:id
+  // PATCH /classrooms/:id
   public updateClassroom(
     id: number,
     updatedClassroom: Partial<Classroom>
@@ -128,7 +128,7 @@ export class ClassroomAPI {
     });
   }
 
-  // DELETE /classroom/:id
+  // DELETE /classrooms/:id
   public deleteClassroom(id: number): Promise<StatusResponse<null>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {

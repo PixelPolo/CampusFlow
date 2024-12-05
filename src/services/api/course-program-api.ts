@@ -11,7 +11,7 @@ export interface CourseProgram {
 }
 
 // Mock Data for relation between courses and programs
-let coursePrograms: CourseProgram[] = [
+let courseProgramRels: CourseProgram[] = [
   { course_id: 1, program_id: 1 },
   { course_id: 1, program_id: 2 },
   { course_id: 2, program_id: 2 },
@@ -33,14 +33,14 @@ let coursePrograms: CourseProgram[] = [
 export class CourseProgramAPI {
   private latency = 100;
 
-  // POST /course-program
-  public addCourseProgramRelation(
+  // POST /course-program { "courseId": number, "programId": number }
+  public addRelation(
     courseId: number,
     programId: number
   ): Promise<StatusResponse<CourseProgram>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const existingRelation = coursePrograms.some(
+        const existingRelation = courseProgramRels.some(
           (relation) =>
             relation.course_id === courseId && relation.program_id === programId
         );
@@ -54,54 +54,54 @@ export class CourseProgramAPI {
             course_id: courseId,
             program_id: programId,
           };
-          coursePrograms.push(newRelation);
+          courseProgramRels.push(newRelation);
           resolve({ status: 201, data: newRelation });
         }
       }, this.latency);
     });
   }
 
-  // GET /course-programs/:course_id
-  public getProgramsByCourse(
+  // GET /course-program/:course_id
+  public getRelsByCourseID(
     courseId: number
   ): Promise<StatusResponse<CourseProgram[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseProgramsForCourse = coursePrograms.filter(
+        const relations = courseProgramRels.filter(
           (relation) => relation.course_id === courseId
         );
-        resolve({ status: 200, data: courseProgramsForCourse });
+        resolve({ status: 200, data: relations });
       }, this.latency);
     });
   }
 
-  // GET /program-course/:program_id
-  public getCoursesByProgram(
+  // GET /course-program/:program_id
+  public getRelsByProgramID(
     programId: number
   ): Promise<StatusResponse<CourseProgram[]>> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const courseProgramsForProgram = coursePrograms.filter(
+        const relations = courseProgramRels.filter(
           (relation) => relation.program_id === programId
         );
-        resolve({ status: 200, data: courseProgramsForProgram });
+        resolve({ status: 200, data: relations });
       }, this.latency);
     });
   }
 
-  // DELETE /course-programs/:course_id/:program_id
-  public removeCourseProgramRelation(
+  // DELETE /course-program { "courseId": number, "programId": number }
+  public removeRelation(
     courseId: number,
     programId: number
   ): Promise<StatusResponse<null>> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        const index = coursePrograms.findIndex(
+        const index = courseProgramRels.findIndex(
           (relation) =>
             relation.course_id === courseId && relation.program_id === programId
         );
         if (index !== -1) {
-          coursePrograms.splice(index, 1);
+          courseProgramRels.splice(index, 1);
           resolve({
             status: 204,
             message: "Course-Program relation removed successfully",

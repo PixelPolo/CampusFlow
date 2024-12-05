@@ -8,7 +8,7 @@ import { StatusResponse } from "./rest-full.model";
 // Interface
 export interface Program {
   program_id?: number;
-  name: string;
+  name: string; // Unique
   description: string;
 }
 

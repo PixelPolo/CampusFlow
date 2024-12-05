@@ -17,7 +17,7 @@
       <!-- Programs -->
       <div class="form-section">
         <div mdc-headline6>Programs concerned</div>
-        <div repeat.for="program of course.programs">
+        <div repeat.for="program of relatedPrograms">
           <!-- Program Name -->
           <div>
             <mdc-text-field
@@ -29,6 +29,7 @@
               disabled
             ></mdc-text-field>
           </div>
+
           <!-- Program Description -->
           <div>
             <mdc-text-field
@@ -50,6 +51,7 @@
             </mdc-button>
           </div>
         </div>
+
         <!-- Add Program -->
         <div>
           <div>
@@ -61,7 +63,7 @@
             >
               <mdc-list>
                 <mdc-list-item
-                  repeat.for="program of allPrograms"
+                  repeat.for="program of programList"
                   value.bind="program"
                   >${program.name}</mdc-list-item
                 >
@@ -81,8 +83,10 @@
       <!-- Schedules -->
       <div class="form-section">
         <div mdc-headline6>Schedules</div>
-        <div repeat.for="schedule of course.schedules">
+        <div repeat.for="schedule of relatedSchedules">
           <div mdc-subtitle1>Schedule</div>
+
+          <!-- Schedules time -->
           <div>
             <mdc-text-field
               type="time"
@@ -97,6 +101,8 @@
               style="width: 75px"
             ></mdc-text-field>
           </div>
+
+          <!-- Schedules day -->
           <div>
             <mdc-select
               ref="select"
@@ -112,6 +118,8 @@
               </mdc-list>
             </mdc-select>
           </div>
+
+          <!-- Schedules classroom -->
           <div>
             <mdc-select
               required
@@ -136,6 +144,7 @@
             </mdc-button>
           </div>
         </div>
+
         <!-- Add Schedule -->
         <div>
           <mdc-button raised click.trigger="addSchedule()">
@@ -146,7 +155,7 @@
 
       <mdc-list-divider></mdc-list-divider>
 
-      <!-- Actions -->
+      <!-- Form actions -->
       <div>
         <mdc-card-actions>
           <mdc-card-action-buttons>

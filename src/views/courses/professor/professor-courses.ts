@@ -1,7 +1,6 @@
 import { AuthService } from "./../../../services/auth/auth";
-import { FullCourse } from "./../../../services/api/course-api";
 import { observable, resolve } from "aurelia";
-import { CoursesAPI } from "../../../services/api/course-api";
+import { Course, CoursesAPI } from "../../../services/api/course-api";
 import { AuthHook } from "../../../hook/auth-hook";
 import { RolesHook } from "../../../hook/roles-hook";
 
@@ -14,24 +13,24 @@ export class ProfessorCourses {
   // ********************
   // ***** SERVICES *****
   // ********************
-  readonly courseAPI: CoursesAPI = resolve(CoursesAPI);
-  readonly authService: AuthService = resolve(AuthService);
+  readonly coursesAPI = resolve(CoursesAPI);
+  readonly authService = resolve(AuthService);
 
   // ******************
   // ***** FIELDS *****
   // ******************
   @observable
-  public myCourses = [];
+  public myCourses: Course[] = [];
 
   // *******************
   // ***** METHODS *****
   // *******************
-  attached() {
+  async attached() {
     const userID = this.authService.getUserID();
-    this.courseAPI
-      .getFullCourses()
+    this.coursesAPI
+      .getCourses()
       .then((response) => {
-        this.myCourses = response.data.filter((course: FullCourse) => {
+        this.myCourses = response.data.filter((course: Course) => {
           return course.user_id === userID;
         });
       })

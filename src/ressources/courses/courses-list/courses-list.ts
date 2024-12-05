@@ -1,32 +1,32 @@
 import { bindable, ICustomElementViewModel } from "aurelia";
-import { CoursesAPI, FullCourse } from "../../../services/api/course-api";
 import { resolve } from "aurelia";
+import { Course, CoursesAPI } from "../../../services/api/course-api";
 
 export class CoursesList implements ICustomElementViewModel {
   // ********************
   // ***** SERVICES *****
   // ********************
 
-  readonly courseAPI: CoursesAPI = resolve(CoursesAPI);
+  readonly courseAPI = resolve(CoursesAPI);
 
   // ******************
   // ***** FIELDS *****
   // ******************
 
   @bindable({ type: Array })
-  public courses: FullCourse[];
+  public courses: Course[];
 
-  public selectedCourse: FullCourse | null = null;
+  public selectedCourse: Course | null = null;
 
   // *******************
   // ***** METHODS *****
   // *******************
-  selectCourse(course: FullCourse) {
+  selectCourse(course: Course) {
     this.selectedCourse = this.selectedCourse === course ? null : course;
   }
 
   // For debugging
-  coursesChanged(newValue: FullCourse[] | null, oldValue: FullCourse[] | null) {
+  coursesChanged(newValue: Course[] | null, oldValue: Course[] | null) {
     console.table(newValue);
   }
 }

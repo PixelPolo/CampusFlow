@@ -1,5 +1,5 @@
+import { CoursesAPI } from "./../../../services/api/course-api";
 import { resolve } from "aurelia";
-import { CoursesAPI } from "../../../services/api/course-api";
 import { AuthHook } from "../../../hook/auth-hook";
 import { RolesHook } from "../../../hook/roles-hook";
 
@@ -12,7 +12,7 @@ export class StudentCourses {
   // ********************
   // ***** SERVICES *****
   // ********************
-  readonly courseAPI: CoursesAPI = resolve(CoursesAPI);
+  readonly coursesAPI = resolve(CoursesAPI);
 
   // ******************
   // ***** FIELDS *****
@@ -23,8 +23,8 @@ export class StudentCourses {
   // ***** METHODS *****
   // *******************
   attached() {
-    this.courseAPI
-      .getFullCourses()
+    this.coursesAPI
+      .getCourses()
       .then((response) => {
         this.allCourses = response.data;
       })

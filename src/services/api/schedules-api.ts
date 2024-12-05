@@ -89,7 +89,7 @@ export class SchedulesAPI {
   // ***** METHODS *****
   // *******************
 
-  // POST /schedule
+  // POST /schedules
   public createSchedule(
     newSchedule: Schedule
   ): Promise<StatusResponse<Schedule>> {

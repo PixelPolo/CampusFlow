@@ -1,115 +1,165 @@
 import { bindable, ICustomElementViewModel, resolve } from "aurelia";
-import { CoursesAPI, FullCourse } from "../../../services/api/course-api";
-import { DayOfWeek, Schedule } from "../../../services/api/schedules-api";
+import { DayOfWeek } from "../../../services/api/schedules-api";
 import { Classroom, ClassroomAPI } from "../../../services/api/classrooms-api";
 import { Program, ProgramsAPI } from "../../../services/api/programs-api";
+import { Course, CoursesAPI } from "../../../services/api/course-api";
+import { RelatedSchedules } from "../course-detail/course-detail";
+import { FormHelper } from "./form-helper";
+
+/*
+
+Classroom {                 Course {                     
+  classroom_id: number;       course_id?: number;        
+  name: string; // Unique     name: string; // Unique    
+  capacity: number;           user_id?: number;        
+}                           }                          
+
+Program {                   CourseProgram {
+  program_id?: number;        course_id: number;
+  name: string; // Unique     program_id: number;
+  description: string;      }  
+}                          
+
+Schedule {                  User {
+  schedule_id?: number;       user_id?: number;
+  course_id: number;          password: string;
+  classroom_id: number;       roles: string[];
+  day: DayOfWeek;             firstName: string;
+  start_time: string;         lastName: string;
+  end_time: string;           email: string; // Unique
+}                           }
+  
+*/
 
 export class CourseForm implements ICustomElementViewModel {
   // ********************
   // ***** SERVICES *****
   // ********************
-  readonly classroomAPI: ClassroomAPI = resolve(ClassroomAPI);
-  readonly courseAPI: CoursesAPI = resolve(CoursesAPI);
-  readonly programsAPI: ProgramsAPI = resolve(ProgramsAPI);
+  private readonly formHelper = resolve(FormHelper);
+  private readonly programsAPI = resolve(ProgramsAPI);
+  private readonly classroomAPI = resolve(ClassroomAPI);
+  private readonly coursesAPI = resolve(CoursesAPI);
 
   // ******************
   // ***** FIELDS *****
   // ******************
-  @bindable() course: FullCourse;
+
+  // Bindables
+  @bindable() course: Course;
+  @bindable() relatedPrograms: Program[];
+  @bindable() relatedSchedules: RelatedSchedules[];
+
+  // Form settings
+  public days = Object.values(DayOfWeek);
+  public classroomsList: Classroom[] = [];
+  public programList: Program[] = [];
+
+  // User interactions
+  public selectedProgram: Program | null = null;
 
   // Inject the host element
   host = resolve(Element);
 
-  public isEditing: boolean = false;
-  public days = Object.values(DayOfWeek);
-  public classroomsList: Classroom[];
-  public allPrograms: Program[] = [];
-  public selectedProgram: Program | null = null;
+  // ********************
+  // ***** METHODS ******
+  // ********************
 
-  async attached() {
-    console.log(this.course);
-    this.classroomsList = (await this.classroomAPI.getClassroom()).data;
-    console.log(this.classroomsList);
-    this.allPrograms = (await this.programsAPI.getPrograms()).data;
+  // Component lifecycle
+  public async attached() {
+    this.initForm();
+  }
 
-    if (!this.course) {
-      this.initializeNewCourse();
+  // Init the form
+  private async initForm() {
+    try {
+      // Fetch programs
+      const pRes = await this.programsAPI.getPrograms();
+      this.programList = pRes.data;
+      // Fetch classrooms
+      const cRes = await this.classroomAPI.getClassrooms();
+      this.classroomsList = cRes.data;
+    } catch (error) {
+      console.error(error);
     }
   }
 
-  private initializeNewCourse() {
-    this.course = {
-      name: "",
-      programs: [],
-      schedules: [],
-      professor: {
-        firstName: "",
-        lastName: "",
-        email: "",
-      },
-    };
-  }
-
-  public addProgram() {
-    this.course.programs.push({ name: "", description: "" });
-  }
-
+  // Add a program to the course
   public addExistingProgram() {
     if (
       this.selectedProgram &&
-      !this.course.programs.some((p) => p.name === this.selectedProgram!.name)
+      !this.relatedPrograms.some(
+        (p) => p.program_id === this.selectedProgram.program_id
+      )
     ) {
-      this.course.programs.push(this.selectedProgram);
-      console.log(`Added existing program: ${this.selectedProgram.name}`);
+      this.relatedPrograms.push(this.selectedProgram);
+      this.selectedProgram = null; // Reset selection
     }
   }
 
+  // Remove program to the course
   public removeProgram(program: Program) {
-    this.course.programs = this.course.programs.filter((p) => p !== program);
-    console.log(`Removed program: ${program.name}`);
-  }
-
-  public addSchedule() {
-    const newSchedule: Schedule = {
-      course_id: -1,
-      classroom_id: -1,
-      day: DayOfWeek.Monday,
-      start_time: "09:00",
-      end_time: "10:30",
-    };
-    this.course.schedules.push(newSchedule);
-  }
-
-  public removeSchedule(schedule: Schedule) {
-    this.course.schedules = this.course.schedules.filter((s) => s !== schedule);
-    console.log(`Removed schedule for day: ${schedule.day}`);
-  }
-
-  public async saveCourse() {
-    const newFullCourse: FullCourse = {
-      name: this.course.name,
-      programs: this.course.programs,
-      schedules: this.course.schedules,
-      professor: this.course.professor,
-    };
-
-    const response = await this.courseAPI.createFullCourse(newFullCourse);
-    console.log("Save course response:", response);
-
-    // Dispatch the save event with updated course data
-    this.host.dispatchEvent(
-      new CustomEvent("save", {
-        detail: this.course,
-        bubbles: true,
-      })
+    this.relatedPrograms = this.relatedPrograms.filter(
+      (p) => p.program_id !== program.program_id
     );
   }
 
+  // Add schedule to the course
+  public addSchedule() {
+    const newSchedule: RelatedSchedules = {
+      schedule_id: undefined, // Handled by the API
+      course_id: this.course.course_id!,
+      classroom: this.classroomsList[0], // Default
+      day: this.days[0], // Default
+      start_time: "08:00", // Default
+      end_time: "10:00", // Default
+    };
+    this.relatedSchedules.push(newSchedule);
+  }
+
+  // Remove schedule to the course
+  public removeSchedule(schedule: RelatedSchedules) {
+    this.relatedSchedules = this.relatedSchedules.filter((s) => s !== schedule);
+  }
+
+  // Save the course details and dispatch a save event
+  public async saveCourse() {
+    try {
+      // Save or update the course
+      const courseRes = this.course.course_id
+        ? await this.coursesAPI.updateCourse(this.course.course_id, this.course)
+        : await this.coursesAPI.createCourse(this.course);
+
+      const savedCourse = courseRes.data;
+
+      // Synchronize related programs
+      await this.formHelper.syncRelatedPrograms(
+        savedCourse.course_id,
+        this.relatedPrograms
+      );
+
+      // Synchronize related schedules
+      await this.formHelper.syncRelatedSchedules(
+        savedCourse.course_id,
+        this.relatedSchedules
+      );
+
+      // Dispatch success event
+      this.host.dispatchEvent(
+        new CustomEvent("save", {
+          detail: this.course,
+          bubbles: true,
+        })
+      );
+    } catch (error) {
+      console.error("Error saving course:", error);
+    }
+  }
+
+  // Cancel the operation and dispatch a cancel event
   public cancel() {
-    // Dispatch the cancel event without additional data
     this.host.dispatchEvent(
       new CustomEvent("cancel", {
-        bubbles: true, // Allow event to bubble up
+        bubbles: true,
       })
     );
   }
