@@ -2,6 +2,8 @@
 
 <https://github.com/PixelPolo/CampusFlow>
 
+Credits: Thiméo D. & Paul R.
+
 This is a prototype for a University management tool frontend.
 
 The backend is simulated inside fake APIs in `src/test/services/api`.
