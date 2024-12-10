@@ -14,6 +14,7 @@ import {
   CourseProgramAPI,
 } from "../../../services/api/course-program-api";
 import { User, UsersAPI } from "../../../services/api/users-api";
+import { Router } from "@aurelia/router";
 
 /*
 
@@ -55,11 +56,12 @@ export class CourseDetail implements ICustomElementViewModel {
   // ***** SERVICES *****
   // ********************
   readonly authService = resolve(AuthService);
-  private readonly programsAPI = resolve(ProgramsAPI);
-  private readonly courseProgramAPI = resolve(CourseProgramAPI);
-  private readonly schedulesAPI = resolve(SchedulesAPI);
-  private readonly classroomAPI = resolve(ClassroomAPI);
-  private readonly usersAPI = resolve(UsersAPI);
+  readonly programsAPI = resolve(ProgramsAPI);
+  readonly courseProgramAPI = resolve(CourseProgramAPI);
+  readonly schedulesAPI = resolve(SchedulesAPI);
+  readonly classroomAPI = resolve(ClassroomAPI);
+  readonly usersAPI = resolve(UsersAPI);
+  readonly router = resolve(Router);
 
   // ******************
   // ***** FIELDS *****
@@ -82,16 +84,16 @@ export class CourseDetail implements ICustomElementViewModel {
   // *******************
 
   // Component lifecycle
-  public attached() {
+  public async attached() {
     // Dev only
     this.canEdit = true;
     // this.canEdit = this.authService.getUserRoles().includes("professor");
     this.isEditing = false;
-    this.fetchCourseDetail();
+    await this.fetchCourseDetail();
   }
 
   // Fetch course detail
-  private fetchCourseDetail() {
+  private async fetchCourseDetail() {
     this.fetchRelatedPrograms();
     this.fetchRelatedSchedules();
     this.fetchProfessor();
@@ -168,15 +170,20 @@ export class CourseDetail implements ICustomElementViewModel {
   }
 
   // Handle the save from the form component
-  public handleSave(event: CustomEvent) {
+  public async handleSave(event: CustomEvent) {
     this.isEditing = false;
     const courseDetail = event.detail;
     this.course = courseDetail;
-    this.fetchCourseDetail();
+    // Refresh the component
+    await this.fetchCourseDetail();
+    this.router.refresh();
   }
 
   // Handle the cancel on edit from the form component
-  public handleCancel() {
+  public async handleCancel() {
     this.isEditing = false;
+    // Refresh the component
+    await this.fetchCourseDetail();
+    this.router.refresh();
   }
 }

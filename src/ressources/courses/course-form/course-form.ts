@@ -5,6 +5,7 @@ import { Program, ProgramsAPI } from "../../../services/api/programs-api";
 import { Course, CoursesAPI } from "../../../services/api/course-api";
 import { RelatedSchedules } from "../course-detail/course-detail";
 import { FormHelper } from "./form-helper";
+import { Router } from "@aurelia/router";
 
 /*
 
@@ -35,10 +36,11 @@ export class CourseForm implements ICustomElementViewModel {
   // ********************
   // ***** SERVICES *****
   // ********************
-  private readonly formHelper = resolve(FormHelper);
-  private readonly programsAPI = resolve(ProgramsAPI);
-  private readonly classroomAPI = resolve(ClassroomAPI);
-  private readonly coursesAPI = resolve(CoursesAPI);
+  readonly formHelper = resolve(FormHelper);
+  readonly programsAPI = resolve(ProgramsAPI);
+  readonly classroomAPI = resolve(ClassroomAPI);
+  readonly coursesAPI = resolve(CoursesAPI);
+  readonly router = resolve(Router);
 
   // ******************
   // ***** FIELDS *****
@@ -66,7 +68,7 @@ export class CourseForm implements ICustomElementViewModel {
 
   // Component lifecycle
   public async attached() {
-    this.initForm();
+    await this.initForm();
   }
 
   // Init the form
@@ -143,6 +145,10 @@ export class CourseForm implements ICustomElementViewModel {
         this.relatedSchedules
       );
 
+      // Refresh the component
+      await this.initForm();
+      this.router.refresh();
+
       // Dispatch success event
       this.host.dispatchEvent(
         new CustomEvent("save", {
@@ -156,7 +162,11 @@ export class CourseForm implements ICustomElementViewModel {
   }
 
   // Cancel the operation and dispatch a cancel event
-  public cancel() {
+  public async cancel() {
+    // Refresh the component
+    await this.initForm();
+    this.router.refresh();
+    // Dispatch cancel event
     this.host.dispatchEvent(
       new CustomEvent("cancel", {
         bubbles: true,

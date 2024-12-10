@@ -97,19 +97,6 @@ export class FormHelper {
         (schedule) => schedule.course_id === courseId
       );
 
-      // Identify schedules to remove
-      const toRemove = existingSchedules.filter(
-        (existing) =>
-          !relatedSchedules.some(
-            (schedule) => schedule.schedule_id === existing.schedule_id
-          )
-      );
-
-      // Remove obsolete schedules
-      for (const schedule of toRemove) {
-        await this.schedulesAPI.deleteSchedule(schedule.schedule_id!);
-      }
-
       // Identify schedules to add
       const toAdd = relatedSchedules.filter(
         (schedule) =>
@@ -127,6 +114,19 @@ export class FormHelper {
           start_time: schedule.start_time,
           end_time: schedule.end_time,
         });
+      }
+
+      // Identify schedules to remove
+      const toRemove = existingSchedules.filter(
+        (existing) =>
+          !relatedSchedules.some(
+            (schedule) => schedule.schedule_id === existing.schedule_id
+          )
+      );
+
+      // Remove obsolete schedules
+      for (const schedule of toRemove) {
+        await this.schedulesAPI.deleteSchedule(schedule.schedule_id!);
       }
 
       // Identify schedules to update
