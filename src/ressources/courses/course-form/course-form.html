@@ -1,5 +1,5 @@
 <template>
-  <mdc-card>
+  <mdc-card class="shape">
     <div>
       <!-- Course Name -->
       <div class="form-section">
@@ -59,7 +59,6 @@
               label="Add Existing Program"
               value.bind="selectedProgram"
               style="width: 50%"
-              hoist-to-body
             >
               <mdc-list>
                 <mdc-list-item
@@ -103,13 +102,12 @@
           </div>
 
           <!-- Schedules day -->
-          <div>
+          <div class="au-select">
             <mdc-select
               ref="select"
               label="Day"
               value.bind="schedule.day"
               style="width: 50%"
-              hoist-to-body
             >
               <mdc-list>
                 <mdc-list-item repeat.for="day of days" value.bind="day"
@@ -120,14 +118,13 @@
           </div>
 
           <!-- Schedules classroom -->
-          <div>
+          <div class="au-select">
             <mdc-select
               required
               ref="select"
               label="Classroom"
               value.bind="schedule.classroom.name"
               style="width: 50%"
-              hoist-to-body
             >
               <mdc-list>
                 <mdc-list-item

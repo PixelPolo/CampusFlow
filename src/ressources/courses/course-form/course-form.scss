@@ -12,16 +12,40 @@ mdc-card {
 .mdc-button,
 .mdc-text-field,
 .mdc-select {
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 .mdc-button {
-  width: 250px
+  width: 250px;
 }
 
 mdc-card-actions {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; 
+  margin-top: 20px;
+}
+
+.au-select .mdc-list {
+  background-color: #fff;
+  padding: 0;
+
+  .mdc-list-item {
+    margin: 0;
+    padding: 2px 20px;
+    border-radius: 0;
+    background-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+      transform: none;
+    }
+  }
+}
+
+.au-select .mdc-select__menu {
+  min-width: 100%;
+  width: auto;
+  box-sizing: border-box;
 }

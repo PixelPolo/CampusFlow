@@ -1,11 +1,15 @@
 mdc-card {
   padding: 20px;
+  border-radius: 15px;
 }
 
 mdc-card-actions {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
+.shape {
+  border-radius: 15px;
+}
