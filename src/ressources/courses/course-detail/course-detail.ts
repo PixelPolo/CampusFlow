@@ -85,9 +85,9 @@ export class CourseDetail implements ICustomElementViewModel {
 
   // Component lifecycle
   public async attached() {
-    // Dev only
-    this.canEdit = true;
-    // this.canEdit = this.authService.getUserRoles().includes("professor");
+    // // Dev only
+    // this.canEdit = true;
+    this.canEdit = this.authService.getUserRoles().includes("professor");
     this.isEditing = false;
     await this.fetchCourseDetail();
   }

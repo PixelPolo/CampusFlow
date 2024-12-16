@@ -58,8 +58,8 @@ export class AuthService {
 
   // Getter for user id
   public getUserID(): number {
-    // DEV ONLY
-    return 2;
-    // return this.currentUser.user_id;
+    // // DEV ONLY
+    // return 2;
+    return this.currentUser.user_id;
   }
 }

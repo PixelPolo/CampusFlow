@@ -24,8 +24,8 @@ export class RolesHook {
     instruction: RoutingInstruction,
     navigation: Navigation
   ) {
-    // DEV ONLY
-    return true
+    // // DEV ONLY
+    // return true
 
     const requiredRoles = instruction.route.match.data.requiredRoles;
     const userRoles = this.authService.getUserRoles();

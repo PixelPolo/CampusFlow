@@ -2,11 +2,28 @@
 
 <https://github.com/PixelPolo/CampusFlow>
 
-Credits: Thiméo D. & Paul R.
+Credits: Thiméo D. & Paul R. (University Group F)
 
 This is a prototype for a University management tool frontend.
 
 The backend is simulated inside fake APIs in `src/test/services/api`.
+
+## Authentication fake accounts
+
+### Student
+
+- email: "<jack.doe@student.com>"
+- password: 123
+
+### Professor
+
+- email: "<fabian.smith@university.com>"
+- password: 123
+
+### Administrative employee
+
+- email: "<jane.johnson@university.com>"
+- password: 123
 
 ## Dev vs Prod
 
@@ -16,7 +33,10 @@ When prod, uncomments dev stuff inside :
 - src/hook/roles-hook.ts
 - src/services/auth/auth.ts
 - src/ressources/courses/course-detail/course-detail.ts
-- src/ressources/courses/course-detail/course-detail.html
+
+In dev, the dynamic menu isn't generated, you have to navigate through urls :
+
+- **_src/my-app.ts_** to check the routes !
 
 ## Skeleton
 
