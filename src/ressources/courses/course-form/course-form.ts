@@ -58,6 +58,7 @@ export class CourseForm implements ICustomElementViewModel {
 
   // User interactions
   public selectedProgram: Program | null = null;
+  public isPristine: boolean = true;
 
   // Inject the host element
   host = resolve(Element);
@@ -73,6 +74,7 @@ export class CourseForm implements ICustomElementViewModel {
 
   // Init the form
   private async initForm() {
+    this.isPristine = true;
     try {
       // Fetch programs
       const pRes = await this.programsAPI.getPrograms();
@@ -94,6 +96,7 @@ export class CourseForm implements ICustomElementViewModel {
       )
     ) {
       this.relatedPrograms.push(this.selectedProgram);
+      this.isPristine = false;
       this.selectedProgram = null; // Reset selection
     }
   }
@@ -103,6 +106,7 @@ export class CourseForm implements ICustomElementViewModel {
     this.relatedPrograms = this.relatedPrograms.filter(
       (p) => p.program_id !== program.program_id
     );
+    this.isPristine = false;
   }
 
   // Add schedule to the course
@@ -116,15 +120,22 @@ export class CourseForm implements ICustomElementViewModel {
       end_time: "10:00", // Default
     };
     this.relatedSchedules.push(newSchedule);
+    this.isPristine = false;
   }
 
   // Remove schedule to the course
   public removeSchedule(schedule: RelatedSchedules) {
     this.relatedSchedules = this.relatedSchedules.filter((s) => s !== schedule);
+    this.isPristine = false;
   }
 
   // Save the course details and dispatch a save event
   public async saveCourse() {
+    // Cancel if pristine
+    if (this.isPristine) {
+      this.cancel();
+      return;
+    }
     try {
       // Save or update the course
       const courseRes = this.course.course_id
@@ -149,6 +160,9 @@ export class CourseForm implements ICustomElementViewModel {
       await this.initForm();
       this.router.refresh();
 
+      // Debug
+      // this.logToDebug();
+
       // Dispatch success event
       this.host.dispatchEvent(
         new CustomEvent("save", {
@@ -172,5 +186,38 @@ export class CourseForm implements ICustomElementViewModel {
         bubbles: true,
       })
     );
+  }
+
+  // DEBUG
+  public logToDebug() {
+    const courseDetails = `
+      Course:
+        - ID: ${this.course.course_id}
+        - Name: ${this.course.name}
+  
+      Related Programs:
+      ${this.relatedPrograms
+        .map(
+          (program) => `
+        - Program ID: ${program.program_id}
+        - Name: ${program.name}
+        - Description: ${program.description}`
+        )
+        .join("\n")}
+  
+      Related Schedules:
+      ${this.relatedSchedules
+        .map(
+          (schedule) => `
+        - Schedule ID: ${schedule.schedule_id}
+        - Day: ${schedule.day}
+        - Start Time: ${schedule.start_time}
+        - End Time: ${schedule.end_time}
+        - Classroom: ${schedule.classroom.name} (ID: ${schedule.classroom.classroom_id})`
+        )
+        .join("\n")}
+    `;
+
+    alert(courseDetails);
   }
 }

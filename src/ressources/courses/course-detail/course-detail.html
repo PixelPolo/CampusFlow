@@ -56,9 +56,9 @@
 
   <div if.bind="isEditing">
     <course-form
-      course.bind="course"
-      related-programs.bind="relatedPrograms"
-      related-schedules.bind="relatedSchedules"
+      course.two-way="course"
+      related-programs.two-way="relatedPrograms"
+      related-schedules.two-way="relatedSchedules"
       save.trigger="handleSave($event)"
       cancel.trigger="handleCancel()"
     ></course-form>
