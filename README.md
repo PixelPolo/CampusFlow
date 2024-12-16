@@ -8,6 +8,14 @@ This is a prototype for a University management tool frontend.
 
 The backend is simulated inside fake APIs in `src/test/services/api`.
 
+## Known issues
+
+- No login persistence with this SPA prototype
+  - The app crash if the page is reloaded
+
+- Bug when creating a course schedule
+  - hard to fix without a real backend
+
 ## Authentication fake accounts
 
 ### Student
